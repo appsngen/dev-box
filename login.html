@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<!--[if IE 9]> <html class="ie9"> <![endif]-->
+<!--[if IE 8]> <html class="ie8"> <![endif]-->
+<html>
+	<head>
+		<title>Login</title>
+
+		<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,200,700,600,400italic' rel='stylesheet' type='text/css' />
+		<!--[if lt IE 10]><link href="css/fonts.css" type="text/css" rel="stylesheet" /><![endif]-->
+		<link href="css/style.css" rel="stylesheet">
+		<link href="css/sign-on-forms.css" type="text/css" rel="stylesheet" />
+		<!--[if lt IE 9]><script src="js/dependencies/html5shiv/html5shiv.js"></script><![endif]-->
+		<script src="js/dependencies/jquery/jquery.js"></script>
+        <script src="js/dependencies/jquery.cookie/jquery.cookie.js"></script>
+        <script src="js/login.js"></script>
+	</head>
+	
+	<body>
+	<div class="content">
+      <div class="content-wrapper-small">
+        <section class="site-logo site-logo-head">
+          <div class="login-page-logo">
+            <h2>AppsNgen</h2><br />
+			<span>Local Development <br/> Environment</span>
+          </div>
+        </section>
+        <section class="form-container">
+          <h1>Sign In</h1>
+		  <label id="errorMessage" class="error-massage"></label>
+          <form>
+            <fieldset>
+              <label for="username">Username:</label>
+              <br>
+              <input id="username" type="text" />
+              <label for="password">Password:</label>
+              <br>
+              <input id="password" type="password" />
+              <button type="button" class="btn btn-blue">ok</button>
+              <span class="additional"><input id="remember" type="checkbox" />
+              <label for="remember">Remember me</label></span>
+            </fieldset>
+          </form>
+        </section>
+      </div>
+    </div> <!-- .content -->
+	</body>
+</html>

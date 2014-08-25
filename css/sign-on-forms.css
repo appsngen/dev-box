@@ -1,0 +1,211 @@
+.content {
+	margin: 0;
+	padding: 0;
+}
+.content .error {
+	color: #d80000;
+	margin-bottom: 20px;
+}
+.content .content-wrapper-small {
+	margin-top: 100px;
+	background: white;
+}
+.content .site-logo {
+	margin-bottom: 50px
+}
+.content .site-logo .login-page-logo {
+	background: url(../img/logo.png) 0px 10px no-repeat;
+	padding-left: 145px;
+	height: 40px;
+	vertical-align: middle;
+	text-align: right;
+	display: block;
+}
+.content .site-logo h2 {
+	display: inline-block;
+	margin: 0;
+	font-size: 33px;
+	color: #526477;
+}
+.content section {
+	padding: 0 30px;
+}
+.content .form-container {
+	background: #f6f6f6;
+	padding-top: 30px;
+	padding-bottom: 30px;
+	margin-bottom: 35px;
+}
+.content section h1 {
+	padding-bottom: 20px;
+	font-size: 32px;
+}
+.content section form fieldset input[type="text"],
+.content section form fieldset input[type="password"] {
+	display: block;
+	width: 320px;
+	margin-bottom: 30px;
+	margin-top: 10px;
+	height: 33px;
+	border: 1px solid #ddd;
+	color: #5e5e64;
+	padding: 0 10px;
+	font-size: 20px;
+}
+.content section form fieldset label {
+	display: inline-block;
+	font-size: 18px;
+}
+.content section form fieldset label.required:after {
+	content: "*";
+	color: #d80000;
+	margin-left: 5px;
+}
+.content section form fieldset .pass {
+	position: relative;
+}
+.content section form fieldset .pass .strength {
+	display: inline-block;
+	position: absolute;
+	right: 15px;
+	top: 6px;
+	font-weight: 800;
+	font-size: 14px;
+}
+.content section form fieldset .pass .strength:before {
+	content: "|";
+	padding-right: 10px;
+	color: #e5e5e5;
+	font-weight: 100;
+	font-size: 16px;
+}
+.content section form fieldset .pass .strength.strong {
+	color: #228c00;
+}
+.content section form fieldset .pass .strength.normal {
+	color: #26609d;
+}
+.content section form fieldset .pass .strength.poor {
+	color: #ff7f00;
+}
+.content section form fieldset .pass input {
+	width: 255px;
+	padding-right: 75px;
+}
+.content section form fieldset input.wrong {
+	border:3px solid #d90000;
+	-moz-border-radius:4px;
+	-webkit-border-radius:4px;
+	border-radius:4px;
+	-moz-box-shadow:none;
+	-webkit-box-shadow:none;
+	box-shadow:none;
+}
+.content section form fieldset .forgot-pass {
+	float: right;
+	font-size: 12px;
+	line-height: 27px;
+}
+.content section form fieldset .btn {
+	padding: 0 19px;
+	font-size: 20px;
+	line-height: 40px;
+	margin-right: 30px; 
+}
+.content section form fieldset .additional label {
+	font-size: 14px;
+}
+.content section form fieldset .additional i {
+	color: #d80000;
+}
+.content .signup {
+	font-size: 18px;
+	color: #526477;
+}
+.content .signup a {
+	color: #265F9D;
+	font-weight: 600;
+}
+.content .back-link {
+	font-size: 16px;
+	padding: 0;
+}
+.content .back-link a {
+	padding-left: 30px;
+	background: url('../img/arrow-back.png') 10px 5px no-repeat;
+}
+.content-wrapper-small {
+	width: 400px;
+	margin: 0 auto;
+}
+h1, h2{
+	font-weight: 400;
+}
+h1{
+	color: #000;
+	margin: 0px;
+}
+h2{
+	margin: 0px;
+}
+body{
+	font-family: 'Source Sans Pro', sans-serif, 'Myriad Pro';
+	font-size: 14px;
+	color: #5E5E64;
+	font-weight: 400;
+}
+form, fieldset{
+	margin: 0px;
+	padding: 0px;
+}
+fieldset, img, abbr, acronym {
+	border: 0;
+}
+a {
+	text-decoration: none;
+	color: #265f9d;
+}
+:focus{
+	outline: 0;
+}
+.btn-blue:hover {
+	background: #08437F;
+}
+.btn:hover {
+	cursor: pointer;
+}
+button.btn {
+	-webkit-appearance: none;
+	border-radius: 0;
+	height: auto;
+	line-height: normal;
+	padding: 0;
+	overflow: visible;
+}
+.btn-blue {
+	background: #26619D;
+}
+.btn {
+	display: inline-block;
+	height: 40px;
+	line-height: 40px;
+	padding: 0 17px 0 19px;
+	font-size: 25px;
+	color: #fff;
+	text-transform: uppercase;
+	border: none;
+	font-family: 'Source Sans Pro', sans-serif, 'Myriad Pro';
+}
+.content section.site-logo-head{
+	padding: 15px 30px 0px 30px;
+}
+.content section.site-logo-head > a > span{
+	color: #999999;
+	line-height: 14px;
+	font-size: 14px;
+}
+.error-massage {
+    color: #de1e1e;
+    display: block;
+    margin-bottom: 20px;
+}

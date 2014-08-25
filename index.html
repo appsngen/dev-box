@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>EPAM App Portal DevBox</title>
+	<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,200,700,600" rel="stylesheet" type="text/css">
+	<!--[if lt IE 10]><link href="css/fonts.css" type="text/css" rel="stylesheet" /><![endif]-->
+    <link rel="icon" href="img/favicon.png" type="image/x-icon"/>
+    <link href="css/jquery-ui-1.9.2.custom.css" rel="stylesheet" />
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+	<link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <!--[if IE 9]><link href="css/ie9.css" rel="stylesheet" type="text/css" /><![endif]-->
+    <script src="https://www.appsngen.com/application-viewer/gadgets/js/appstore.api.js?c=1"></script>
+    <script src="http://localhost:8889/content/js/appstore.api.container.js" type="text/javascript"></script>
+	<script src="js/dependencies/jquery/jquery.js"></script>
+	<script>
+		$(document).ready(function() {
+			$(".top-tabs li").click(function () {
+				$(".top-tabs li").removeClass("select");
+				$(this).addClass("select");
+				var className = $(this).attr("id");
+				$(".panel").hide();
+				$("."+className).show();
+			});
+		});
+	</script>
+</head>
+
+<body>
+    <!-- header -->
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container-fluid">
+                <div class="logo">
+					<h2>AppsNgen DevBox</h2>
+				</div>
+				<div class="sign-out" >
+					<span id="userName" class="name">Andrei Filipovich</span>
+					<a href="javascript:void(0);" id="signOut" class="out-button">Sign Out</a>
+				</div>
+            </div>
+        </div>
+    </div>
+	
+	<!-- top tabs -->
+	<div class="tabs">
+		<ul class="top-tabs">
+			<li id="gen-settings" class="select"><a href="javascript:void(0);">General settings</a></li>
+			<li id="events"><a href="javascript:void(0);">Events</a></li>
+            <!--
+			<li id="preferences"><a href="javascript:void(0);">Preferences</a></li>
+            -->
+		</ul>
+	</div>
+
+    <!-- content -->
+    <div class="container-fluid">
+        <div id="content" class="row-fluid">
+			<div id="sidebar" class="span3">
+				<div class="well gen-settings panel">
+					<div>
+                        <div style="position: relative;">
+                            <h4 style="display: inline-block;">Applications</h4>
+                            <i id = "allApps" title="Loading" class="icon-refresh icon-white pull-right" style="display: inline-block;position: absolute;right: 26px;top: 16px;"></i>
+                        </div>
+						<ul id="appList" class="nav nav-pills nav-stacked">
+						</ul>
+					</div>
+					<div>
+						<h4>Settings</h4>
+						<label class="checkbox">
+							<input id="dynamicHeight" type="checkbox"> Dynamic height.
+						</label>
+					</div>
+				</div>
+				<div class="well events panel" style="display: none;">
+					<div class="clearfix">
+						<h4>Events Publishing</h4>
+						<label>Channel</label>
+						<div class="control-group">
+							<input id="publishChannel" class="input-block-level" data-provide="typeahead" data-items="8" type="text">
+						</div>
+							<label>Data</label>
+						<div class="control-group">
+							<textarea id="publishData" class="input-block-level" style="height: 200px;">{ "type": "RIC", "value": "IBM.N" }</textarea>
+						</div>
+						<button id="publish" class="btn btn-primary pull-right" type="button">Publish</button>
+					</div>
+					<div id="subscribing">
+						<h4>Events Subscribing</h4>
+						<label>Channel</label>
+						<div class="input-append" style="margin-right: 88px;">
+							<div class="control-group">
+								<input type="text" id="subscribeChannel" class="input-block-level" data-provide="typeahead" data-items="8">
+								<button class="btn" type="button" id="subscribe">Subscribe</button>
+							</div>
+						</div>
+
+						<label>Data</label>
+						<pre id="subscribeData" class="events-data input-block-level"></pre>
+					</div>
+				</div>
+				<div class="well preferences panel" style="display: none;">
+				</div>
+			</div>
+			<div id="mainbar" class="span9">
+				<div id="apps" class="well clearfix">
+			
+				</div>
+			</div>
+        </div>
+
+        <!-- footer -->
+        <hr>
+        <footer>
+            <p>© EPAM <script>document.write(new Date().getFullYear())</script></p>
+        </footer>
+    </div>
+
+    <script src="js/dependencies/jquery/jquery.js"></script>
+    <script src="js/dependencies/jquery-color/jquery.color.js"></script>
+    <script src="js/dependencies/jquery-ui/jquery-ui.js"></script>
+    <script src="js/dependencies/jquery.cookie/jquery.cookie.js"></script>
+    <script src="js/dependencies/bootstrap-css/bootstrap.min.js"></script>
+    <script src="js/devbox.container.js"></script>
+    <script src="js/dependencies/underscore/underscore-min.js"></script>
+
+    <!-- underscore templates-->
+    <script type="text/template" id="appTmpl">
+        <div id="<%= id %>App" class="app pull-left" data-index="<%= index %>">
+            <div class="app-header clearfix">
+                <h4 class="pull-left"><%= name %></h4>
+                <div class="btn-toolbar pull-right" style="font-size: inherit;">
+                    <span class="app-width muted" title='Width'>0</span>
+                    <span class="muted">×</span>
+                    <span class="app-height muted" title='Height'>0</span>
+                </div>
+            </div>
+            <div class="resizable">
+                    <iframe src="<%= src %>" id="<%= id %>" name="<%= id %>" data-user="<%= user %>" data-organization="<%= organization %>" frameborder="no" width="100%" height="100%"></iframe>
+            </div>
+        </div>
+    </script>
+    
+    <script type="text/template" id="loginTmpl">
+        <div id="loginForm" class="app pull-left" style="width:100%; height:100%;">
+            <iframe name="login" src="<%= src %>" frameborder="no" width="100%" height="100%"></iframe>
+        </div>
+    </script>
+
+    <script type="text/template" id="appItemTmpl">
+        <li data-app-id="<%= id %>">
+            <a href="javascript:void(0);" title="" ><%= name %>
+                <i title="Refresh application" class="icon-refresh icon-white pull-right" style="display: none"></i>
+            </a>
+        </li>
+    </script>
+
+    <script type="text/template" id="appItem">
+        <li class="active" data-app-id="<%= id %>">
+            <a href="javascript:void(0);" title="" ><%= name %>
+                <i title="Refresh application" class="icon-refresh icon-white pull-right" style="display: none"></i>
+            </a>
+        </li>
+    </script>
+
+    <script type="text/template" id="channelItem">
+        <span class="label label-info">
+            <span class="close">&times;</span>
+            <span class="channel"><%= channel %></span>
+        </span>
+    </script>
+</body>
+</html>
+
