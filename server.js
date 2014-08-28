@@ -7,7 +7,10 @@
         routers = require('./modules/router'),
         logger = require('./modules/logger')(module),
         bodyParser = require('body-parser'),
-        methodOverride = require('method-override');
+        methodOverride = require('method-override'),
+        serverConfig = require('./modules/serverconfig');
+
+    serverConfig.readServerConfig(port);
 
     process.on('uncaughtException', function(err) {
         logger.error(err, err.message, err.stack);

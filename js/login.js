@@ -51,7 +51,7 @@ $(function () {
 
         var sendCredentials = function(data){
             $.ajax({
-                url: 'http://localhost:8879/login',
+                url: 'http://localhost:' + location.port +'/login',
                 type: 'POST',
                 data: data,
                 dataType: 'json',

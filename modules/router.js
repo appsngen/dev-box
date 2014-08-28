@@ -47,8 +47,8 @@
 
     exports.login = function (request, response) {
         var postOptions = {
-            hostname: 'localhost',
-            port: '8889',
+            hostname: global.viwerHost,
+            port: global.viewerPort,
             path: '/login',
             method: 'POST',
             headers: {
@@ -73,10 +73,10 @@
         };
         var userId = encodeURIComponent(request.params.userId),
             organizationId = encodeURIComponent(request.params.organizationId),
-            filename = __dirname + '/../widgetslist.json',
+            filename = __dirname + global.widgetsPath,
             postOptions = {
-                hostname: 'localhost',
-                port: '8889',
+                hostname: global.viwerHost,
+                port: global.viewerPort,
                 path: '/widgets?organizationId=' + organizationId + '&userId=' + userId,
                 method: 'POST',
                 headers: {

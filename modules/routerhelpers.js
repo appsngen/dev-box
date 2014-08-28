@@ -6,7 +6,8 @@
     var fs = require('fs'),
         http = require('http'),
         logger = require('./logger')(module),
-        each = require('async-each-series');
+        each = require('async-each-series'),
+        filesystem = require('./filesystem');
     exports.parseCookies = function (request) {
         var list = {},
             rc = request.headers.cookie, array = rc && rc.split(';');
@@ -52,77 +53,13 @@
         });
     };
 
-    exports.readFile = function (filename, callback, errorCallback) {
-        var message;
-        fs.exists(filename, function (exists) {
-            if (!exists) {
-                message = 'Can not find file ' + filename;
-                logger.error(message);
-                errorCallback(message);
-            }
-            else {
-                fs.readFile(filename, function (error, data) {
-                    if (error) {
-                        message = 'Can not read file ' + filename;
-                        logger.error(message);
-                        errorCallback(message);
-                    }
-                    else {
-                        callback(data);
-                    }
-                });
-            }
-        });
-    };
-
-    exports.readFileBinary = function (filename, callback, errorCallback) {
-        var message;
-        fs.exists(filename, function (exists) {
-            if (!exists) {
-                message = 'Can not find file ' + filename;
-                logger.error(message);
-                errorCallback(message);
-            }
-            else {
-                fs.readFile(filename, 'binary', function (error, data) {
-                    if (error) {
-                        message = 'Can not read file ' + filename;
-                        logger.error(message);
-                        errorCallback(message);
-                    }
-                    else {
-                        callback(data);
-                    }
-                });
-            }
-        });
-    };
-
-    exports.writeFile = function (filename, data, callback, errorCallback) {
-        fs.writeFile(filename, data, function (error) {
-            if (error) {
-                logger.error(error);
-                errorCallback(error);
-            }
-            else {
-                callback();
-            }
-        });
-    };
-
-    exports.exist = function (path, callback) {
-        fs.exists(path, function (exists) {
-            callback(exists);
-        });
-    };
-
     exports.checkCache = function (path, callback, errorCallback) {
-        var cache = {}, cachePath = __dirname + '/../cache.json', that = this;
-        that.exist(cachePath, function(exist){
+        var cache = {}, cachePath = __dirname + '/../cache.json';
+        filesystem.exist(cachePath, function(exist){
             if(!exist){
                 fs.openSync(cachePath, 'w');
             }
-            that.readFile(cachePath, function (data) {
+            filesystem.readFile(cachePath, function (data) {
                 try {
                     cache = JSON.parse(data);
                 }
@@ -141,7 +78,7 @@
                     if (cache[path]) {
                         if (new Date(cache[path]) < stats.ctime) {
                             cache[path] = stats.ctime;
-                            that.writeFile(cachePath, JSON.stringify(cache), function () {
+                            filesystem.writeFile(cachePath, JSON.stringify(cache), function () {
                                 callback(true);
                             }, errorCallback);
                         }
@@ -151,7 +88,7 @@
                     }
                     else {
                         cache[path] = stats.ctime;
-                        that.writeFile(cachePath, JSON.stringify(cache), function () {
+                        filesystem.writeFile(cachePath, JSON.stringify(cache), function () {
                             callback(true);
                         }, errorCallback);
                     }
@@ -162,24 +99,24 @@
 
     exports.processResults = function (params, responseData, callback, errorCallback) {
         var results = responseData, configPath = __dirname + '/../config.json';
-        var appsList = {}, appsPath = {}, dataWrite = [], parsedData, that = this;
+        var appsList = {}, appsPath = {}, dataWrite = [], parsedData;
         results.forEach(function (element) {
-            appsList[element.name] = 'http://localhost:8889/organizations/' +
+            appsList[element.name] = 'http://'+ global.viwerHost + ':' + global.viwerHost +'/organizations/' +
                 params.organizationId.split(':')[2] + '/widgets/' +
                 element.name + '/index.html?clientId=' +
                 encodeURIComponent(params.organizationId) + '&parent=' +
-                'http%3A%2F%2Flocalhost:8879&integrationType=customer&userId=' +
+                'http%3A%2F%2F' + global.devBoxHost + ':' + global.devBoxPort + '&integrationType=customer&userId=' +
                 encodeURIComponent(params.userId) + '&frameId=' + element.name;
             appsPath[element.name] = element.path;
         });
 
         dataWrite.push(appsList);
         dataWrite.push(appsPath);
-        that.exist(configPath, function(exist) {
+        filesystem.exist(configPath, function(exist) {
             if (!exist) {
                 fs.openSync(configPath, 'w');
             }
-            that.readFile(configPath, function (data) {
+            filesystem.readFile(configPath, function (data) {
                 try {
                     parsedData = JSON.parse(data);
                 }
@@ -189,7 +126,7 @@
                      */
                 }
                 if (!parsedData) {
-                    that.writeFile(configPath, JSON.stringify(dataWrite), function () {
+                    filesystem.writeFile(configPath, JSON.stringify(dataWrite), function () {
                         callback();
                     }, errorCallback);
                 }
@@ -204,7 +141,7 @@
                             parsedData[1][path] = appsPath[path];
                         }
                     }
-                    that.writeFile(configPath, JSON.stringify(parsedData), function () {
+                    filesystem.writeFile(configPath, JSON.stringify(parsedData), function () {
                         callback();
                     }, errorCallback);
                 }
@@ -215,7 +152,7 @@
 
     exports.viewerUpload = function(uploadConfig, callback, sendError){
         var that = this, summary = [], responseData = [], widgets = [];
-        that.readFile(uploadConfig.filename, function (data) {
+        filesystem.readFile(uploadConfig.filename, function (data) {
             try {
                 widgets = JSON.parse(data);
             }
@@ -231,7 +168,7 @@
             each(widgets, function (element, next) {
                 that.checkCache(element, function (result) {
                     if (result) {
-                        that.readFileBinary(element, function (data) {
+                        filesystem.readFileBinary(element, function (data) {
                             summary.push({ data: data, path: element });
                             next();
                         }, sendError);

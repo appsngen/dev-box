@@ -4,3 +4,4 @@
 logs.txt
 cache.json
 config.json
+/.out/jshint
