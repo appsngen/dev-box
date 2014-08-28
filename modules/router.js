@@ -19,7 +19,7 @@
             response.status(500).send();
         };
         var uri = url.parse(request.url).pathname,
-            filename = path.join(process.cwd(), uri);
+            filename = path.join(__dirname + '/../', uri);
 
         fs.exists(filename, function (exists) {
             if (!exists) {
@@ -73,7 +73,7 @@
         };
         var userId = encodeURIComponent(request.params.userId),
             organizationId = encodeURIComponent(request.params.organizationId),
-            filename = process.cwd() + '/widgetslist.json',
+            filename = __dirname + '/../widgetslist.json',
             postOptions = {
                 hostname: 'localhost',
                 port: '8889',
@@ -84,7 +84,7 @@
                 }
             }, options, pathConfig, uploadConfig = {};
         if (request.query.widgetId) {
-            options = fs.readFileSync(process.cwd() + '/config.json');
+            options = fs.readFileSync(__dirname + '/../config.json');
             pathConfig = JSON.parse(options)[1][request.query.widgetId];
         }
         uploadConfig.pathConfig = pathConfig;

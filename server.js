@@ -36,7 +36,7 @@
     server.use(globalErrorHandler);
 
     http.createServer(server).listen(server.get('port'), function(){
-        console.log('Server running at [http://localhost:' + port);
+        console.log('Server running at http://localhost:' + port);
         console.log('CTRL + C to shutdown');
     });
 }());

@@ -117,7 +117,7 @@
     };
 
     exports.checkCache = function (path, callback, errorCallback) {
-        var cache = {}, cachePath = process.cwd() + '/cache.json', that = this;
+        var cache = {}, cachePath = __dirname + '/../cache.json', that = this;
         that.exist(cachePath, function(exist){
             if(!exist){
                 fs.openSync(cachePath, 'w');
@@ -161,7 +161,7 @@
     };
 
     exports.processResults = function (params, responseData, callback, errorCallback) {
-        var results = responseData, configPath = process.cwd() + '/config.json';
+        var results = responseData, configPath = __dirname + '/../config.json';
         var appsList = {}, appsPath = {}, dataWrite = [], parsedData, that = this;
         results.forEach(function (element) {
             appsList[element.name] = 'http://localhost:8889/organizations/' +
