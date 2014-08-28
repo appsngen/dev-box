@@ -8,7 +8,8 @@
         fs = require('fs'),
         mime = require('mime'),
         logger = require('./logger')(module),
-        helpers = require('./routerhelpers');
+        helpers = require('./routerhelpers'),
+        filesystem = require('./filesystem');
 
     mime.types['less'] = mime.types['css'];
 
@@ -38,7 +39,7 @@
                 filename = filename.replace('index.html', 'login.html');
             }
 
-            helpers.readFile(filename, function (data) {
+            filesystem.readFile(filename, function (data) {
                 response.set('Content-Type', mime.lookup(filename));
                 response.status(200).send(data);
             }, sendError);
