@@ -101,7 +101,7 @@
         var results = responseData, configPath = __dirname + '/../config.json';
         var appsList = {}, appsPath = {}, dataWrite = [], parsedData;
         results.forEach(function (element) {
-            appsList[element.name] = 'http://'+ global.viwerHost + ':' + global.viwerHost +'/organizations/' +
+            appsList[element.name] = 'http://'+ global.viwerHost + ':' + global.viewerPort +'/organizations/' +
                 params.organizationId.split(':')[2] + '/widgets/' +
                 element.name + '/index.html?clientId=' +
                 encodeURIComponent(params.organizationId) + '&parent=' +

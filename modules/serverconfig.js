@@ -9,7 +9,7 @@
         filesystem.readFile(filename, function(data){
             try{
                 var parsedData = JSON.parse(data);
-                global.viewerPort = parsedData.port;
+                global.viewerPort = parsedData.viewerPort;
                 global.viwerHost = parsedData.viwerHost;
                 global.widgetsPath = parsedData.widgetsPath;
                 global.devBoxPort = port;
