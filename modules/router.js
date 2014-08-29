@@ -46,6 +46,16 @@
         });
     };
 
+    exports.config = function(request, response) {
+        response.set('Content-Type', 'application/json');
+        var result = {
+            port : global.viewerPort,
+            host: global.viwerHost
+        };
+
+        response.status(200).send(result);
+    };
+
     exports.login = function (request, response) {
         var postOptions = {
             hostname: global.viwerHost,

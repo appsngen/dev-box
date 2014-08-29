@@ -3,8 +3,9 @@
  */
 (function () {
     'use strict';
-    var filesystem = require('./filesystem');
-    exports.readServerConfig = function(port){
+    var filesystem = require('./filesystem'),
+        portscanner = require('portscanner');
+    exports.readServerConfig = function(callback){
         var filename = __dirname + '/../serverConfig.json';
         filesystem.readFile(filename, function(data){
             try{
@@ -12,8 +13,11 @@
                 global.viewerPort = parsedData.viewerPort;
                 global.viwerHost = parsedData.viwerHost;
                 global.widgetsPath = parsedData.widgetsPath;
-                global.devBoxPort = port;
+                global.devBoxPort = parsedData.devBoxPort;
                 global.devBoxHost = parsedData.devBoxHost;
+                portscanner.checkPortStatus(global.devBoxPort, global.devBoxHost, function(error, status) {
+                    callback(global.devBoxPort, status);
+                });
             }catch (ex){
                 throw 'Unable parsed server config.';
             }

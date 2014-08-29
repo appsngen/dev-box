@@ -1,6 +1,7 @@
 {
     "viewerPort" : "8889",
     "viwerHost" : "localhost",
+    "devBoxPort" : "8879",
     "devBoxHost" : "localhost",
-    "widgetsPath" : "/../../../widgetslist.json"
+    "widgetsPath" : "/../widgetslist.json"
 }

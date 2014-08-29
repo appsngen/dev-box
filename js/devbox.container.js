@@ -17,7 +17,7 @@ $(function () {
         $subscribing = $('#subscribing');
 
     var user,
-        organization;
+        organization, viewerPort, viewerHost;
 
     var showAlert = function(message){
         $('body').prepend('<div class="alert alert-error"> ' +
@@ -47,6 +47,32 @@ $(function () {
             }
         }
     },
+
+        loadViewerConfig = function(){
+            var url = 'http://localhost:' + location.port + '/config';
+            $.ajax({
+                url: url,
+                dataType: 'json',
+                cache: false,
+                async: false,
+                success: function (response) {
+                    debugger;
+                    viewerPort = response.port;
+                    viewerHost = response.host;
+                    require.config({
+                        baseUrl: 'http://' + viewerHost + ':' + viewerPort + '/content/js/',
+                        waitSeconds: 0
+                    });
+                    // load dependencies
+                    require(['appstore.api.container'], function () {
+                        debugger;
+                    });
+                },
+                error: function (request) {
+                    showAlert(request.statusText);
+                }
+            });
+        },
 
         createApp = function (appName, appUrl, index, complete) {
             var $app = $(appTmpl({
@@ -357,4 +383,6 @@ $(function () {
         }
         return width;
     };
+
+    loadViewerConfig();
 });
