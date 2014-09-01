@@ -11,7 +11,7 @@
             try{
                 var parsedData = JSON.parse(data);
                 global.viewerPort = parsedData.viewerPort;
-                global.viwerHost = parsedData.viwerHost;
+                global.viewerHost = parsedData.viewerHost;
                 global.widgetsPath = parsedData.widgetsPath;
                 global.devBoxPort = parsedData.devBoxPort;
                 global.devBoxHost = parsedData.devBoxHost;

@@ -50,7 +50,7 @@
         response.set('Content-Type', 'application/json');
         var result = {
             port : global.viewerPort,
-            host: global.viwerHost
+            host: global.viewerHost
         };
 
         response.status(200).send(result);
@@ -58,7 +58,7 @@
 
     exports.login = function (request, response) {
         var postOptions = {
-            hostname: global.viwerHost,
+            hostname: global.viewerHost,
             port: global.viewerPort,
             path: '/login',
             method: 'POST',
@@ -86,7 +86,7 @@
             organizationId = encodeURIComponent(request.params.organizationId),
             filename = __dirname + global.widgetsPath,
             postOptions = {
-                hostname: global.viwerHost,
+                hostname: global.viewerHost,
                 port: global.viewerPort,
                 path: '/widgets?organizationId=' + organizationId + '&userId=' + userId,
                 method: 'POST',
