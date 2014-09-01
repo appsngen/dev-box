@@ -5,6 +5,12 @@
     'use strict';
     var filesystem = require('./filesystem'),
         portscanner = require('portscanner');
+
+    var clearCache = function(cachePath, widgetsConfigPath){
+        filesystem.removeFileSync(__dirname + cachePath);
+        filesystem.removeFileSync(__dirname + widgetsConfigPath);
+    };
+
     exports.readServerConfig = function(callback){
         var filename = __dirname + '/../serverConfig.json';
         filesystem.readFile(filename, function(data){
@@ -15,6 +21,7 @@
                 global.widgetsPath = parsedData.widgetsPath;
                 global.devBoxPort = parsedData.devBoxPort;
                 global.devBoxHost = parsedData.devBoxHost;
+                clearCache(parsedData.cache, parsedData.widgetsConfig);
                 portscanner.checkPortStatus(global.devBoxPort, global.devBoxHost, function(error, status) {
                     callback(global.devBoxPort, status);
                 });

@@ -56,7 +56,6 @@ $(function () {
                 cache: false,
                 async: false,
                 success: function (response) {
-                    debugger;
                     viewerPort = response.port;
                     viewerHost = response.host;
                     require.config({
@@ -64,9 +63,7 @@ $(function () {
                         waitSeconds: 0
                     });
                     // load dependencies
-                    require(['appstore.api.container'], function () {
-                        debugger;
-                    });
+                    require(['appstore.api.container'], function () {});
                 },
                 error: function (request) {
                     showAlert(request.statusText);

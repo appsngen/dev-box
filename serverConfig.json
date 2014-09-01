@@ -3,5 +3,7 @@
     "viewerHost" : "localhost",
     "devBoxPort" : "8879",
     "devBoxHost" : "localhost",
-    "widgetsPath" : "/../widgetslist.json"
+    "widgetsPath" : "/../widgetslist.json",
+    "cache" : "/../cache.json",
+    "widgetsConfig": "/../config.json"
 }
