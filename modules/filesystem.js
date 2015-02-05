@@ -70,25 +70,6 @@
         });
     };
 
-    exports.removeFile = function (filename, callback, errorCallback) {
-        var that = this;
-        fs.exists(path, function (exists) {
-            if(exists){
-                fs.unlink(filename, function (error) {
-                    if (error) {
-                        that.logger.error(error.message, error);
-                        errorCallback(error.message);
-                    }
-                    else {
-                        callback();
-                    }
-                });
-            }
-            else{
-                callback();
-            }
-        });
-    };
     exports.removeFileSync = function(filePath){
         if (fs.existsSync(filePath)) {
             fs.unlinkSync(filePath);

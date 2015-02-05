@@ -4,26 +4,18 @@
 (function () {
     'use strict';
     var filesystem = require('./filesystem'),
-        portscanner = require('portscanner');
-
-    var clearCache = function(cachePath, widgetsConfigPath){
-        filesystem.removeFileSync(__dirname + cachePath);
-        filesystem.removeFileSync(__dirname + widgetsConfigPath);
-    };
+        portscanner = require('portscanner'),
+        storageModule = require('./storage');
 
     exports.readServerConfig = function(callback){
-        var filename = __dirname + '/../serverConfig.json';
+        var filename = __dirname + '/../serverconfig.json', parsedData, storage;
         filesystem.readFile(filename, function(data){
             try{
-                var parsedData = JSON.parse(data);
-                global.viewerPort = parsedData.viewerPort;
-                global.viewerHost = parsedData.viewerHost;
-                global.widgetsPath = parsedData.widgetsPath;
-                global.devBoxPort = parsedData.devBoxPort;
-                global.devBoxHost = parsedData.devBoxHost;
-                clearCache(parsedData.cache, parsedData.widgetsConfig);
-                portscanner.checkPortStatus(global.devBoxPort, global.devBoxHost, function(error, status) {
-                    callback(global.devBoxPort, status);
+                parsedData = JSON.parse(data);
+                storage= parsedData;
+                storageModule.setStorage(storage);
+                portscanner.checkPortStatus(storage.devBoxPort, storage.devBoxHost, function(error, status) {
+                    callback(storage.devBoxPort, status);
                 });
             }catch (ex){
                 throw 'Unable parsed server config.';

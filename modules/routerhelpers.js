@@ -4,10 +4,18 @@
 (function () {
     'use strict';
     var fs = require('fs'),
-        http = require('http'),
         logger = require('./logger')(module),
         each = require('async-each-series'),
-        filesystem = require('./filesystem');
+        filesystem = require('./filesystem'),
+        storageModule = require('./storage'),
+        viewerRequester = require('./restservicesrequester');
+
+    exports.sendError = function (response, error) {
+        logger.error(error);
+        response.set('Content-Type', 'text/plain');
+        response.status(500).send();
+    };
+
     exports.parseCookies = function (request) {
         var list = {},
             rc = request.headers.cookie, array = rc && rc.split(';');
@@ -21,40 +29,9 @@
         return list;
     };
 
-    exports.sendRequest = function (options, data, callback, errorCallback) {
-        var dataResponse = '';
-        var request = http.request(options, function (res) {
-            res.on('data', function (chunk) {
-                dataResponse += chunk;
-            });
-
-            res.on('end', function () {
-                try {
-                    callback(JSON.parse(dataResponse));
-                }
-                catch (exception) {
-                    logger.error(exception.message);
-                    errorCallback(exception.message);
-                }
-            });
-
-            res.on('error', function (error) {
-                logger.error(error.message);
-                errorCallback(error.message);
-            });
-        });
-        if (data) {
-            request.write(data);
-        }
-        request.end();
-        request.on('error', function (error) {
-            logger.error(error.message);
-            errorCallback(error.message);
-        });
-    };
-
     exports.checkCache = function (path, callback, errorCallback) {
-        var cache = {}, cachePath = __dirname + '/../cache.json';
+        var storage = storageModule.getStorage();
+        var cache = {}, cachePath = __dirname + storage.cache;
         filesystem.exist(cachePath, function(exist){
             if(!exist){
                 fs.openSync(cachePath, 'w');
@@ -97,17 +74,31 @@
         });
     };
 
+    exports.getTokensForAllWidgets = function(widgets){
+        var i;
+        for(i = 0; i< widgets.length; i++){
+            var token = viewerRequester.createToken(widgets[i].name);
+            widgets[i].token = token;
+        }
+
+        return widgets;
+    };
+
     exports.processResults = function (params, responseData, callback, errorCallback) {
-        var results = responseData, configPath = __dirname + '/../config.json';
-        var appsList = {}, appsPath = {}, dataWrite = [], parsedData;
+        var results = responseData,
+            storage = storageModule.getStorage(),
+            configPath = __dirname + storage.widgetsConfig;
+        var appsList = {}, appsPath = {}, dataWrite = [], parsedData ,id;
         results.forEach(function (element) {
-            appsList[element.name] = 'http://'+ global.viewerHost + ':' + global.viewerPort +'/organizations/' +
+            id = element.name.split(':')[3];
+            appsList[id] = 'http://'+ storage.viewerHost + ':' + storage.viewerPort +'/organizations/' +
                 params.organizationId.split(':')[2] + '/widgets/' +
                 element.name + '/index.html?clientId=' +
                 encodeURIComponent(params.organizationId) + '&parent=' +
-                'http%3A%2F%2F' + global.devBoxHost + ':' + global.devBoxPort + '&integrationType=customer&userId=' +
-                encodeURIComponent(params.userId) + '&frameId=' + element.name;
-            appsPath[element.name] = element.path;
+                'http%3A%2F%2F' + storage.devBoxHost + ':' + storage.devBoxPort + '&integrationType=customer&userId=' +
+                encodeURIComponent(params.userId) + '&frameId=' + element.name + '&token=' +
+                encodeURIComponent(element.token);
+            appsPath[id] = element.path;
         });
 
         dataWrite.push(appsList);
@@ -187,13 +178,8 @@
                     return;
                 }
                 each(summary, function (element, next) {
-                    var data = new Buffer(element.data, 'binary');
-                    uploadConfig.postOptions.headers = {
-                        'Content-Length': data.length,
-                        'Accept-Encoding': 'gzip'
-                    };
-                    that.sendRequest(uploadConfig.postOptions, data, function (response) {
-                        responseData.push({ name: response.name, path: element.path });
+                    viewerRequester.uploadWidget(element.data, function (response) {
+                        responseData.push({ name: response, path: element.path });
                         next();
                     }, sendError);
 
@@ -202,6 +188,7 @@
                         sendError(error);
                         return;
                     }
+                    responseData = that.getTokensForAllWidgets(responseData);
                     that.processResults(uploadConfig.params, responseData, function () {
                         callback({message: 'All widgets were uploaded.'});
                     }, sendError);

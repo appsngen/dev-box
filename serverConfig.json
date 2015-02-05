@@ -1,9 +1,34 @@
 {
-    "viewerPort" : "8889",
-    "viewerHost" : "localhost",
-    "devBoxPort" : "8879",
-    "devBoxHost" : "localhost",
-    "widgetsPath" : "/../widgetslist.json",
-    "cache" : "/../cache.json",
-    "widgetsConfig": "/../config.json"
-}
+    "viewerPort": "8889",
+    "viewerProtocol": "http",
+    "viewerHost": "localhost",
+    "devBoxPort": "8879",
+    "devBoxHost": "localhost",
+    "widgetsPath": "/../widgetslist.json",
+    "cache": "/../cache.json",
+    "widgetsConfig": "/../views/config.json",
+    "tokenService": {
+        "host": "www.appsngen.com",
+        "path": "/auth-service/tokens",
+        "port": "",
+        "protocol": "https"
+    },
+    "logger": {
+        "levels": {
+            "file": "info",
+            "console": "info",
+            "grayLog": "warn"
+        },
+        "priority": {
+            "silly": 0,
+            "debug": 1,
+            "verbose": 2,
+            "info": 3,
+            "warn": 4,
+            "error": 5
+        }
+    }, "user": {
+    "userId": "",
+    "password": "",
+    "organizationId": ""
+}}

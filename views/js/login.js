@@ -67,7 +67,7 @@ $(function () {
             });
         };
         $.ajax({
-            url: 'https://dev.appsngen.com/auth-service/tokens',
+            url: 'https://www.appsngen.com/auth-service/tokens',
             type: 'POST',
             dataType: 'json',
             data: JSON.stringify({'scope':{'services':['access']}}),
@@ -88,7 +88,7 @@ $(function () {
                     expires = remember ? { expires: 14 } : null;
                 $.cookie('user', user, expires);
                 $.cookie('organization', organization, expires);
-                sendCredentials(JSON.stringify({username: user, password: password}));
+                sendCredentials(JSON.stringify({userId: user, password: password, organizationId: organization}));
             },
             error: function () {
                 $('#errorMessage').text('Wrong username or password');

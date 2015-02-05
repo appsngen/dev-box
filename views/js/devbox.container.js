@@ -63,7 +63,7 @@ $(function () {
                         waitSeconds: 0
                     });
                     // load dependencies
-                    require(['appstore.api.container'], function () {});
+                    require(['appsngen.container.api'], function () {});
                 },
                 error: function (request) {
                     showAlert(request.statusText);
@@ -190,6 +190,7 @@ $(function () {
 
             var index = 0;
             _.each(config[0], function (appUrl, appName) {
+
                 var $appItem = $(appItemTmpl({ name: appName, id: appName })),
                     appLoaded = function () {
                         $appItem.find('.icon-refresh').removeClass('loading');

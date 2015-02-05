@@ -1,7 +1,7 @@
 .idea
-/js/dependencies
+/views/js/dependencies
 /node_modules
-logs.txt
-cache.json
+/logs
+/views/cache.json
 config.json
 /.out/jshint

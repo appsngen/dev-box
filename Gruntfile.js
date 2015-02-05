@@ -12,13 +12,13 @@ module.exports = function (grunt) {
                     reporter: 'jslint',
                     reporterOutput: '.out/jshint/jshint.xml'
                 },
-                src: ['modules/*.js', 'js/*.js', '*.js']
+                src: ['modules/*.js', 'views/js/*.js', '*.js']
             }
         },
         bower: {
             install: {
                 options: {
-                    targetDir: 'js/dependencies',
+                    targetDir: 'views/js/dependencies',
                     layout: 'byComponent',
                     install: true,
                     verbose: false,

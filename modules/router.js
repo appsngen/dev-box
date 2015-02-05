@@ -7,107 +7,81 @@
         path = require('path'),
         fs = require('fs'),
         mime = require('mime'),
-        logger = require('./logger')(module),
         helpers = require('./routerhelpers'),
-        filesystem = require('./filesystem');
+        filesystem = require('./filesystem'),
+        storageModule = require('./storage');
 
     mime.types['less'] = mime.types['css'];
 
-    exports.getHtml = function (request, response) {
-        var sendError = function (error) {
-            logger.error(error);
-            response.set('Content-Type', 'text/plain');
-            response.status(500).send();
-        };
+    exports.getResources = function (request, response, next) {
         var uri = url.parse(request.url).pathname,
             filename = path.join(__dirname + '/../', uri);
 
         fs.exists(filename, function (exists) {
             if (!exists) {
-                response.set('Content-Type', 'text/plain');
-                response.status(404).send('404 Not Found\n');
+                response.status(404);
+                response.render('notFound.html', { resource: request.url});
                 return;
             }
-
-            if (fs.statSync(filename).isDirectory()) {
-                filename += '/index.html';
+            if(mime.lookup(filename) === 'text/html'){
+                next();
             }
-
-            var cookies = helpers.parseCookies(request),
-                cookieSet = cookies['user'] && cookies['organization'];
-            if (!cookieSet) {
-                filename = filename.replace('index.html', 'login.html');
+            else{
+                filesystem.readFile(filename, function (data) {
+                    response.set('Content-Type', mime.lookup(filename));
+                    response.status(200).send(data);
+                }, helpers.sendError.bind(this, response));
             }
-
-            filesystem.readFile(filename, function (data) {
-                response.set('Content-Type', mime.lookup(filename));
-                response.status(200).send(data);
-            }, sendError);
         });
     };
 
+    exports.getHtml = function (request, response) {
+        var cookies = helpers.parseCookies(request),
+            cookieSet = cookies['user'] && cookies['organization'];
+        if (!cookieSet) {
+            response.render('login.html');
+        }
+        else {
+            response.render('index.html');
+        }
+    };
+
     exports.config = function(request, response) {
+        var storage = storageModule.getStorage();
         response.set('Content-Type', 'application/json');
         var result = {
-            port : global.viewerPort,
-            host: global.viewerHost
+            port : storage.viewerPort,
+            host: storage.viewerHost
         };
 
         response.status(200).send(result);
     };
 
     exports.login = function (request, response) {
-        var postOptions = {
-            hostname: global.viewerHost,
-            port: global.viewerPort,
-            path: '/login',
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        };
-        helpers.sendRequest(postOptions, JSON.stringify(request.body), function () {
-            response.status(200).send({message: 'credentials saved.'});
-        }, function (error) {
-            logger.error(error);
-            response.set('Content-Type', 'text/plain');
-            response.status(500).send(error);
-        });
+        storageModule.saveUser(request.body);
+        response.status(200).send({message: 'credentials saved.'});
     };
 
     exports.uploadWidgets = function (request, response) {
+        var storage = storageModule.getStorage();
         response.setHeader('Cache-Control', 'no-cache');
-        var sendError = function (error) {
-            logger.error(error);
-            response.set('Content-Type', 'application/json');
-            response.status(500).send(error);
-        };
-        var userId = encodeURIComponent(request.params.userId),
-            organizationId = encodeURIComponent(request.params.organizationId),
-            filename = __dirname + global.widgetsPath,
-            postOptions = {
-                hostname: global.viewerHost,
-                port: global.viewerPort,
-                path: '/widgets?organizationId=' + organizationId + '&userId=' + userId,
-                method: 'POST',
-                headers: {
-                    'Cache-Control': 'no-cache'
-                }
-            }, options, pathConfig, uploadConfig = {};
+        var filename = __dirname + storage.widgetsPath,
+            options, pathConfig, uploadConfig = {};
         if (request.query.widgetId) {
-            options = fs.readFileSync(__dirname + '/../config.json');
+            options = fs.readFileSync(__dirname + storage.widgetsConfig);
             pathConfig = JSON.parse(options)[1][request.query.widgetId];
         }
         uploadConfig.pathConfig = pathConfig;
         uploadConfig.filename = filename;
-        uploadConfig.postOptions = postOptions;
         uploadConfig.params = request.params;
+        uploadConfig.user = storage.user;
         helpers.viewerUpload(uploadConfig, function(data){
             response.status(200).send(data);
-        }, sendError);
+        }, helpers.sendError.bind(this, response));
     };
 
     exports.unhandling = function (request, response) {
-        response.status(404).send({message: 'Not found.'});
+        response.status(404);
+        response.render('notFound.html', { resource: request.url});
     };
 }());
