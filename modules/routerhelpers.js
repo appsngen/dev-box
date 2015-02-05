@@ -19,21 +19,21 @@
     exports.parseCookies = function (request) {
         var list = {},
             rc = request.headers.cookie, array = rc && rc.split(';');
-        if(array){
+        if (array) {
             array.forEach(function (cookie) {
                 var parts = cookie.split('=');
                 list[parts.shift().trim()] = decodeURI(parts.join('='));
             });
         }
-        
+
         return list;
     };
 
     exports.checkCache = function (path, callback, errorCallback) {
         var storage = storageModule.getStorage();
         var cache = {}, cachePath = __dirname + storage.cache;
-        filesystem.exist(cachePath, function(exist){
-            if(!exist){
+        filesystem.exist(cachePath, function (exist) {
+            if (!exist) {
                 fs.openSync(cachePath, 'w');
             }
             filesystem.readFile(cachePath, function (data) {
@@ -53,8 +53,8 @@
                         errorCallback(error);
                     }
                     if (cache[path]) {
-                        if (new Date(cache[path]) < stats.ctime) {
-                            cache[path] = stats.ctime;
+                        if (new Date(cache[path]) < stats.mtime) {
+                            cache[path] = stats.mtime;
                             filesystem.writeFile(cachePath, JSON.stringify(cache), function () {
                                 callback(true);
                             }, errorCallback);
@@ -74,9 +74,35 @@
         });
     };
 
-    exports.getTokensForAllWidgets = function(widgets){
+    exports.resetCache = function (path, callback, errorCallback) {
+        var storage = storageModule.getStorage();
+        var cache = {}, cachePath = __dirname + storage.cache;
+        filesystem.exist(cachePath, function (exist) {
+            if (exist) {
+                filesystem.readFile(cachePath, function (data) {
+                    try {
+                        cache = JSON.parse(data);
+                    } catch (exception) {
+                        /**
+                         * Empty file.
+                         */
+                    }
+
+                    if (cache && cache[path]) {
+                        delete cache[path];
+                        filesystem.writeFile(cachePath, JSON.stringify(cache), function () {
+                            callback(true);
+                        }, errorCallback);
+                    }
+
+                }, errorCallback);
+            }
+        });
+    };
+
+    exports.getTokensForAllWidgets = function (widgets) {
         var i;
-        for(i = 0; i< widgets.length; i++){
+        for (i = 0; i < widgets.length; i++) {
             var token = viewerRequester.createToken(widgets[i].name);
             widgets[i].token = token;
         }
@@ -88,10 +114,10 @@
         var results = responseData,
             storage = storageModule.getStorage(),
             configPath = __dirname + storage.widgetsConfig;
-        var appsList = {}, appsPath = {}, dataWrite = [], parsedData ,id;
+        var appsList = {}, appsPath = {}, dataWrite = [], parsedData , id;
         results.forEach(function (element) {
             id = element.name.split(':')[3];
-            appsList[id] = 'http://'+ storage.viewerHost + ':' + storage.viewerPort +'/organizations/' +
+            appsList[id] = 'http://' + storage.viewerHost + ':' + storage.viewerPort + '/organizations/' +
                 params.organizationId.split(':')[2] + '/widgets/' +
                 element.name + '/index.html?clientId=' +
                 encodeURIComponent(params.organizationId) + '&parent=' +
@@ -103,7 +129,7 @@
 
         dataWrite.push(appsList);
         dataWrite.push(appsPath);
-        filesystem.exist(configPath, function(exist) {
+        filesystem.exist(configPath, function (exist) {
             if (!exist) {
                 fs.openSync(configPath, 'w');
             }
@@ -141,14 +167,14 @@
         });
     };
 
-    exports.viewerUpload = function(uploadConfig, callback, sendError){
+    exports.viewerUpload = function (uploadConfig, callback, sendError) {
         var that = this, summary = [], responseData = [], widgets = [];
         filesystem.readFile(uploadConfig.filename, function (data) {
             try {
                 widgets = JSON.parse(data);
             }
-            catch(exception){
-                var error = {message :'Can not parse widgets list file.'};
+            catch (exception) {
+                var error = {message: 'Can not parse widgets list file.'};
                 sendError(error);
                 return;
             }
@@ -173,21 +199,31 @@
                     callback({message: 'Empty list of widgets.'});
                     return;
                 }
+
                 if (error) {
                     sendError(error);
                     return;
                 }
+
                 each(summary, function (element, next) {
                     viewerRequester.uploadWidget(element.data, function (response) {
                         responseData.push({ name: response, path: element.path });
                         next();
-                    }, sendError);
+                    }, function (error) {
+                        sendError(error);
 
+                        that.resetCache(element.path, function () {
+                            // cache was succesfully reset
+                        }, function (error) {
+                            sendError(error);
+                        });
+                    });
                 }, function (error) {
                     if (error) {
                         sendError(error);
                         return;
                     }
+
                     responseData = that.getTokensForAllWidgets(responseData);
                     that.processResults(uploadConfig.params, responseData, function () {
                         callback({message: 'All widgets were uploaded.'});
