@@ -90,7 +90,7 @@
         }
 
         urlPath = storage.tokenService.path;
-        userPassword = storage.user.userId + ':' + storage.user.password;
+        userPassword = storage.user.name + ':' + storage.user.password;
         signature = new Buffer(userPassword).toString('base64');
         authorization = 'Basic ' + signature;
 
@@ -176,7 +176,7 @@
             'aud': {
                 'organization': storage.user.organizationId,
                 'userRoles': ['ROLE_DEVELOPER'],
-                'user': storage.user.userId,
+                'user': storage.user.name,
                 'domains':['http://' + storage.devBoxHost + ':' + storage.devBoxPort]
             },
             'sub': 'identity',

@@ -97,4 +97,11 @@ $(function () {
             }
         });
     };
+
+    var user = $('#username').val();
+    var password = $('#password').val();
+
+    if (user && password) {
+        makeRequest();
+    }
 });

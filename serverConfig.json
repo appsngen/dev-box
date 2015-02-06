@@ -28,7 +28,7 @@
             "error": 5
         }
     }, "user": {
-    "userId": "",
+    "name": "",
     "password": "",
     "organizationId": ""
 }}

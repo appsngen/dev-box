@@ -14,7 +14,7 @@
     };
 
     exports.saveUser = function(user){
-        storage.user= user;
+        storage.user = user;
         filesystem.writeFileSync(__dirname + '/../serverconfig.json', JSON.stringify(storage));
     };
 }());

@@ -27,7 +27,7 @@
 
         return result;
     };
-    var filename = 'viewer_' + dateFormat(date) + '.log', loggerFolderPath = __dirname + '/../logs/';
+    var filename = 'devbox_' + dateFormat(date) + '.log', loggerFolderPath = __dirname + '/../logs/';
     var traceCaller = function (lineNumber) {
         var postfixIndex;
         if (isNaN(lineNumber) || lineNumber < 0) {

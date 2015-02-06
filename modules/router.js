@@ -7,6 +7,7 @@
         path = require('path'),
         fs = require('fs'),
         mime = require('mime'),
+        _ = require('underscore'),
         helpers = require('./routerhelpers'),
         filesystem = require('./filesystem'),
         storageModule = require('./storage');
@@ -36,12 +37,24 @@
     };
 
     exports.getHtml = function (request, response) {
-        var cookies = helpers.parseCookies(request),
-            cookieSet = cookies['user'] && cookies['organization'];
-        if (!cookieSet) {
-            response.render('login.html');
-        }
-        else {
+        var cookies = helpers.parseCookies(request);
+        var cookieUser = cookies['user'];
+        var cookieOrganization = cookies['organization'];
+        var storage = storageModule.getStorage();
+        var loginTemplate;
+        var loginHtml;
+
+        // compare cookie user and config user
+        cookieUser = cookieUser ? decodeURIComponent(cookieUser) : '';
+
+        if (!cookieUser || !cookieOrganization || cookieUser !== storage.user.name) {
+            loginTemplate = fs.readFileSync('views/login.html', 'utf8');
+            loginHtml = _.template(loginTemplate, storage.user);
+            response.write(loginHtml);
+            response.end();
+        } else {
+            // set organization to storage
+            storage.user.organizationId = decodeURIComponent(cookieOrganization);
             response.render('index.html');
         }
     };
@@ -58,7 +71,12 @@
     };
 
     exports.login = function (request, response) {
-        storageModule.saveUser(request.body);
+        storageModule.saveUser({
+            name: request.body.userId,
+            password: request.body.password,
+            organizationId: request.body.organizationId
+        });
+
         response.status(200).send({message: 'credentials saved.'});
     };
 
