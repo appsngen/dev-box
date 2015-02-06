@@ -48,7 +48,7 @@
         cookieUser = cookieUser ? decodeURIComponent(cookieUser) : '';
 
         if (!cookieUser || !cookieOrganization || cookieUser !== storage.user.name) {
-            loginTemplate = fs.readFileSync('views/login.html', 'utf8');
+            loginTemplate = fs.readFileSync(__dirname + '/../views/login.html', 'utf8');
             loginHtml = _.template(loginTemplate, storage.user);
             response.write(loginHtml);
             response.end();
