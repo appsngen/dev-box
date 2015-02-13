@@ -27,8 +27,10 @@
             "warn": 4,
             "error": 5
         }
-    }, "user": {
-    "name": "",
-    "password": "",
-    "organizationId": ""
-}}
+    },
+    "user": {
+        "name": "",
+        "password": "",
+        "organizationId": ""
+    }
+}

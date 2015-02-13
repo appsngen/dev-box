@@ -145,7 +145,7 @@
                 postOptions.method = 'PUT';
                 that.sendRequest(postOptions, protocol, function (response, status) {
                     if (status === 200) {
-                        callback(response.urn);
+                        callback(response.message);
                     }
                     else {
                         errorCallback(response);
@@ -154,7 +154,7 @@
             }
             else {
                 if (status === 200 || status === 201) {
-                    callback(response.message.split(' ')[1]);
+                    callback(response.message);
                 }
                 else {
                     errorCallback(response);
