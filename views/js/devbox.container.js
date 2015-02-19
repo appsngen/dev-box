@@ -1,6 +1,5 @@
 $(function () {
     'use strict';
-    var channels = _.filter(appstore.events.channels, function (value) { return typeof value === 'string'; });
 
     var appTmpl = _.template($('#appTmpl').html()),
         appItemTmpl = _.template($('#appItemTmpl').html()),
@@ -154,13 +153,7 @@ $(function () {
             // disable resizable before to enable dynamic height handling
             $('.resizable').resizable('option', 'disabled', true);
 
-            appstore.events.subscribe('resizeApp', function (channel, data, sender) {
-                var element = document.getElementById(sender);
-                if (element) {
-                    element.style.height = data.height + 'px';
-                }
-                appstore.events.publish('resizeApp', { appId: sender, isFirst: data.isFirst });
-            });
+            // TODO: reference appstore.api
 
             var scrollBarWidth = $.scrollbarWidth();
             $('.resizable').each(function () {
@@ -175,7 +168,9 @@ $(function () {
 
         disableDynamicHeight = function () {
             $('.resizable').resizable('option', 'disabled', false);
-            appstore.events.unsubscribe('resizeApp');
+
+            // TODO: reference appstore.api
+
             $('.resizable').each(function () {
                 var w = $(this).attr('prevw'),
                     h = $(this).attr('prevh');
@@ -297,10 +292,6 @@ $(function () {
     organization = clientCookie.organization;
     creatAppList();
     toggleSignOut();
-
-
-    // populate channels inputs with values
-    $('#publishChannel, #subscribeChannel').attr('data-source', JSON.stringify(channels));
 
     // handle events publishing
     $publish.on('click', function () {
