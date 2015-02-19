@@ -7,20 +7,20 @@
         portscanner = require('portscanner'),
         storageModule = require('./storage');
 
-    exports.readServerConfig = function(callback){
+    exports.readServerConfig = function (callback) {
         var filename = __dirname + '/../serverconfig.json', parsedData, storage;
-        filesystem.readFile(filename, function(data){
-            try{
+        filesystem.readFile(filename, function (data) {
+            try {
                 parsedData = JSON.parse(data);
-                storage= parsedData;
+                storage = parsedData;
                 storageModule.setStorage(storage);
-                portscanner.checkPortStatus(storage.devBoxPort, storage.devBoxHost, function(error, status) {
+                portscanner.checkPortStatus(storage.devBoxPort, storage.devBoxHost, function (error, status) {
                     callback(storage.devBoxPort, status);
                 });
-            }catch (ex){
+            } catch (ex) {
                 throw 'Unable parsed server config.';
             }
-        }, function(){
+        }, function () {
             throw 'Unable read server config.';
         });
     };
