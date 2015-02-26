@@ -41,8 +41,9 @@
         var cookieUser = cookies['user'];
         var cookieOrganization = cookies['organization'];
         var storage = storageModule.getStorage();
-        var loginTemplate;
-        var loginHtml;
+        var loginTemplate, indexTemplate;
+        var loginHtml, indexHtml;
+        var viewerHost;
 
         // compare cookie user and config user
         cookieUser = cookieUser ? decodeURIComponent(cookieUser) : '';
@@ -51,23 +52,17 @@
             loginTemplate = fs.readFileSync(__dirname + '/../views/login.html', 'utf8');
             loginHtml = _.template(loginTemplate, storage.user);
             response.write(loginHtml);
-            response.end();
+
         } else {
             // set organization to storage
+            viewerHost = storage.viewerProtocol + '://' + storage.viewerHost + ':' + storage.viewerPort;
+            indexTemplate = fs.readFileSync(__dirname + '/../views/index.html', 'utf8');
+            indexHtml = _.template(indexTemplate, { viewerHost: viewerHost });
             storage.user.organizationId = decodeURIComponent(cookieOrganization);
-            response.render('index.html');
+            response.write(indexHtml);
         }
-    };
 
-    exports.config = function(request, response) {
-        var storage = storageModule.getStorage();
-        response.set('Content-Type', 'application/json');
-        var result = {
-            port : storage.viewerPort,
-            host: storage.viewerHost
-        };
-
-        response.status(200).send(result);
+        response.end();
     };
 
     exports.login = function (request, response) {

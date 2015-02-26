@@ -13,14 +13,14 @@
 	<link href="css/bootstrap-responsive.css" rel="stylesheet">
     <!--[if IE 9]>
     <link href="css/ie9.css" rel="stylesheet" type="text/css"/><![endif]-->
-    <!--<script src="https://www.appsngen.com/application-viewer/gadgets/js/appstore.api.js?c=1"></script>-->
+    <script src="<%%= viewerHost %%>/content/js/appsngen.container.api.js"></script>
 	<script src="js/dependencies/jquery/jquery.js"></script>
     <script src="js/dependencies/jquery-color/jquery.color.js"></script>
     <script src="js/dependencies/jquery-ui/jquery-ui.js"></script>
     <script src="js/dependencies/jquery.cookie/jquery.cookie.js"></script>
     <script src="js/dependencies/bootstrap-css/bootstrap.min.js"></script>
     <script src="js/dependencies/underscore/underscore-min.js"></script>
-    <script src="http://requirejs.org/docs/release/2.1.14/minified/require.js"></script>
+    <script src="js/dependencies/requirejs/require.js"></script>
     <script src="js/devbox.container.js"></script>
 	<script>
 		$(document).ready(function() {
@@ -75,7 +75,7 @@
 						<ul id="appList" class="nav nav-pills nav-stacked">
 						</ul>
 					</div>
-					<div style="display: none;">
+					<div style="">
 						<h4>Settings</h4>
 						<label class="checkbox">
 							<input id="dynamicHeight" type="checkbox"> Dynamic height.
@@ -87,7 +87,8 @@
 						<h4>Events Publishing</h4>
 						<label>Channel</label>
 						<div class="control-group">
-							<input id="publishChannel" class="input-block-level" data-provide="typeahead" data-items="8" type="text">
+							<input id="publishChannel" class="input-block-level" data-provide="typeahead"
+                                   data-items="8" type="text" value="SINGLE_INSTRUMENT">
 						</div>
 							<label>Data</label>
 						<div class="control-group">
@@ -100,7 +101,8 @@
 						<label>Channel</label>
 						<div class="input-append" style="margin-right: 88px;">
 							<div class="control-group">
-								<input type="text" id="subscribeChannel" class="input-block-level" data-provide="typeahead" data-items="8">
+								<input type="text" id="subscribeChannel" class="input-block-level"
+                                       data-provide="typeahead" data-items="8" value="SINGLE_INSTRUMENT">
 								<button class="btn" type="button" id="subscribe">Subscribe</button>
 							</div>
 						</div>
@@ -128,7 +130,7 @@
 
     <!-- underscore templates-->
     <script type="text/template" id="appTmpl">
-        <div id="<%= id %>App" class="app pull-left" data-index="<%= index %>">
+        <div id="<%= divId %>App" class="app pull-left" data-index="<%= index %>">
             <div class="app-header clearfix">
                 <h4 class="pull-left"><%= name %></h4>
                 <div class="btn-toolbar pull-right" style="font-size: inherit;">
@@ -138,7 +140,8 @@
                 </div>
             </div>
             <div class="resizable">
-                    <iframe src="<%= src %>" id="<%= id %>" name="<%= id %>" data-user="<%= user %>" data-organization="<%= organization %>" frameborder="no" width="100%" height="100%"></iframe>
+                    <iframe src="<%= src %>" id="<%= frameId %>" data-user="<%= user %>"
+                            data-organization="<%= organization %>" frameborder="no" width="100%" height="100%"></iframe>
             </div>
         </div>
     </script>

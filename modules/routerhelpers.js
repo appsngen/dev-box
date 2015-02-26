@@ -122,7 +122,7 @@
                 element.name + '/index.html?clientId=' +
                 encodeURIComponent(params.organizationId) + '&parent=' +
                 'http%3A%2F%2F' + storage.devBoxHost + ':' + storage.devBoxPort + '&integrationType=customer&userId=' +
-                encodeURIComponent(params.userId) + '&frameId=' + element.name + '&token=' +
+                encodeURIComponent(params.userId) + '&token=' +
                 encodeURIComponent(element.token);
             appsPath[id] = element.path;
         });

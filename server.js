@@ -89,7 +89,6 @@
         server.use(methodOverride());
         server.set('port', port);
         server.post('/login', routers.login);
-        server.get('/config', routers.config);
         server.get('/upload/:organizationId/:userId', routers.uploadWidgets);
         server.get('/views/*', routers.getResources);
         server.get('/views/*', routers.getHtml);

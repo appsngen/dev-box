@@ -16,63 +16,55 @@ $(function () {
         $subscribing = $('#subscribing');
 
     var user,
-        organization, viewerPort, viewerHost;
+        organization;
 
-    var showAlert = function(message){
+    var getUniqueId = (function () {
+        var id = 0;
+
+        return function () {
+            return id++;
+        };
+    }());
+
+    var showAlert = function (message) {
         $('body').prepend('<div class="alert alert-error"> ' +
-            '<button type="button" class="close" data-dismiss="alert">&times;</button> ' +
-            '<strong>Warning! </strong>'+ message +
-            '</div>');
+        '<button type="button" class="close" data-dismiss="alert">&times;</button> ' +
+        '<strong>Warning! </strong>' + message +
+        '</div>');
     };
 
     var toggleApp = function (appName, appUrl, index, complete) {
-        var $app = $('#' + appName + 'App'), $prevApps;
+            var $app = $('#' + appName + 'App'), $prevApps;
 
-        if ($app.length > 0) {
-            // toggle if exists
-            $app.remove();
-        } else {
-            // create if doesn't exist
-            $app = createApp(appName, appUrl, index, complete);
-
-            // calculate app position and append its.
-            $prevApps = $('.app').filter(function () {
-                return parseInt($(this).attr('data-index')) < index;
-            });
-            if ($prevApps.length === 0) {
-                $apps.prepend($app);
+            if ($app.length > 0) {
+                // toggle if exists
+                $app.remove();
             } else {
-                $prevApps.last().after($app);
-            }
-        }
-    },
+                // create if doesn't exist
+                $app = createApp(appName, appUrl, index, complete);
 
-        loadViewerConfig = function(){
-            var url = 'http://localhost:' + location.port + '/config';
-            $.ajax({
-                url: url,
-                dataType: 'json',
-                cache: false,
-                async: false,
-                success: function (response) {
-                    viewerPort = response.port;
-                    viewerHost = response.host;
-                    require.config({
-                        baseUrl: 'http://' + viewerHost + ':' + viewerPort + '/content/js/',
-                        waitSeconds: 0
-                    });
-                    // load dependencies
-                    require(['appsngen.container.api'], function () {});
-                },
-                error: function (request) {
-                    showAlert(request.statusText);
+                // calculate app position and append its.
+                $prevApps = $('.app').filter(function () {
+                    return parseInt($(this).attr('data-index')) < index;
+                });
+                if ($prevApps.length === 0) {
+                    $apps.prepend($app);
+                } else {
+                    $prevApps.last().after($app);
                 }
-            });
+            }
         },
-
         createApp = function (appName, appUrl, index, complete) {
+            var frameId = appName + getUniqueId();
+            var url = appUrl + '&frameId=' + encodeURIComponent(frameId);
             var $app = $(appTmpl({
-                    name: appName, src: appUrl, id: appName, index: index, user: user, organization: organization
+                    name: appName,
+                    src: url,
+                    frameId: frameId,
+                    divId: appName,
+                    index: index,
+                    user: user,
+                    organization: organization
                 })),
                 $appIframe = $app.find('iframe'),
                 $appWidthLabel = $app.find('.app-width'),
@@ -82,9 +74,9 @@ $(function () {
                     $appWidthLabel.text($appIframe.width());
                     $appHeightLabel.text($appIframe.height());
                 };
-            $app.resize(function() {
+            $app.resize(function () {
                 var appsContainers = $('.app.pull-left');
-                appsContainers.each(function(index, element){
+                appsContainers.each(function (index, element) {
                     $(element).find('.app-width.muted').text($(element).find('iframe').width());
                     $(element).find('.app-height.muted').text($(element).find('iframe').height());
                 });
@@ -114,7 +106,7 @@ $(function () {
                 /**
                  * Default height 600X600
                  */
-                $app.find('.resizable').css({ height: 600, width: 600 });
+                $app.find('.resizable').css({height: 600, width: 600});
                 complete();
                 drawSize();
             });
@@ -133,13 +125,15 @@ $(function () {
 
         subscribeForChannel = function (channel) {
             if ($subscribing.find('.channel')
-                .filter(function () { return $(this).text() === channel; }).length > 0) {
+                    .filter(function () {
+                        return $(this).text() === channel;
+                    }).length > 0) {
                 return;
             }
             appstore.events.subscribe(channel, function (channel, data) {
-                $subscribeData.text(JSON.stringify({ channel: channel, data: data }, null, '  '));
+                $subscribeData.text(JSON.stringify({channel: channel, data: data}, null, '  '));
             });
-            $subscribe.parent().parent().after(channelItemTmpl({ channel: channel }));
+            $subscribe.parent().parent().after(channelItemTmpl({channel: channel}));
             $subscribeChannel.val('');
         },
 
@@ -153,14 +147,9 @@ $(function () {
             // disable resizable before to enable dynamic height handling
             $('.resizable').resizable('option', 'disabled', true);
 
-            // TODO: reference appstore.api
-
-            var scrollBarWidth = $.scrollbarWidth();
+            appstore.dynamicHeight.enable();
             $('.resizable').each(function () {
-                $(this).css({ height: 'auto', width: 'auto' });
-                var iframe = $(this).find('iframe')[0];
-                iframe.height = $(iframe).contents().height() + scrollBarWidth + 'px';
-                iframe.width = $(iframe).contents().width() + scrollBarWidth + 'px';
+                $(this).css({height: 'auto'});
                 $(this).attr('prevw', $(this).width());
                 $(this).attr('prevh', $(this).height());
             });
@@ -169,24 +158,22 @@ $(function () {
         disableDynamicHeight = function () {
             $('.resizable').resizable('option', 'disabled', false);
 
-            // TODO: reference appstore.api
+            appstore.dynamicHeight.disable();
 
             $('.resizable').each(function () {
-                var w = $(this).attr('prevw'),
-                    h = $(this).attr('prevh');
-                $(this).css({ height: h + 'px', width: w + 'px' });
+                $(this).css({height: 'auto', width: 'auto'});
                 var iframe = $(this).find('iframe')[0];
                 iframe.height = '100%';
                 iframe.width = '100%';
             });
         },
 
-        loadAppList = function(config){
+        loadAppList = function (config) {
 
             var index = 0;
             _.each(config[0], function (appUrl, appName) {
 
-                var $appItem = $(appItemTmpl({ name: appName, id: appName })),
+                var $appItem = $(appItemTmpl({name: appName, id: appName})),
                     appLoaded = function () {
                         $appItem.find('.icon-refresh').removeClass('loading');
                     };
@@ -205,7 +192,7 @@ $(function () {
                 $appItem.find('.icon-refresh').on('click', function (event) {
                     var id = $appItem.attr('data-app-id'),
                         url = 'http://localhost:' + location.port +
-                            '/upload/' + organization + '/' + user + '?widgetId=' +id;
+                            '/upload/' + organization + '/' + user + '?widgetId=' + id;
                     $appItem.find('.icon-refresh').addClass('loading');
                     event.stopPropagation();
                     $.ajax({
@@ -214,7 +201,7 @@ $(function () {
                         cache: false,
                         async: true,
                         success: function () {
-                            if (!getClientCookie()){
+                            if (!getClientCookie()) {
                                 window.location.reload();
                             }
 
@@ -232,7 +219,7 @@ $(function () {
             $('#allApps').css('display', 'none');
         },
 
-        loadConfig = function(){
+        loadConfig = function () {
             $.ajax({
                 url: 'config.json',
                 dataType: 'json',
@@ -242,7 +229,7 @@ $(function () {
             });
         },
 
-        creatAppList = function() {
+        creatAppList = function () {
             $('#allApps').addClass('loading');
             $.ajax({
                 url: 'http://localhost:' + location.port + '/upload/' + organization + '/' + user,
@@ -257,8 +244,8 @@ $(function () {
         },
 
         expireClientCookie = function () {
-            $.cookie('user', user, { expires: -1 });
-            $.cookie('organization', organization, { expires: -1 });
+            $.cookie('user', user, {expires: -1});
+            $.cookie('organization', organization, {expires: -1});
         },
 
         getClientCookie = function () {
@@ -267,7 +254,7 @@ $(function () {
 
                 clientCookie = null;
 
-            if (_user && _organization){
+            if (_user && _organization) {
                 clientCookie = {
                     user: _user,
                     organization: _organization
@@ -372,6 +359,4 @@ $(function () {
         }
         return width;
     };
-
-    loadViewerConfig();
 });
