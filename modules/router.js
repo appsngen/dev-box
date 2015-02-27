@@ -77,18 +77,9 @@
 
     exports.uploadWidgets = function (request, response) {
         var storage = storageModule.getStorage();
+
         response.setHeader('Cache-Control', 'no-cache');
-        var filename = __dirname + storage.widgetsPath,
-            options, pathConfig, uploadConfig = {};
-        if (request.query.widgetId) {
-            options = fs.readFileSync(__dirname + storage.widgetsConfig);
-            pathConfig = JSON.parse(options)[1][request.query.widgetId];
-        }
-        uploadConfig.pathConfig = pathConfig;
-        uploadConfig.filename = filename;
-        uploadConfig.params = request.params;
-        uploadConfig.user = storage.user;
-        helpers.viewerUpload(uploadConfig, function(data){
+        helpers.viewerUpload(storage.widgets, storage.user, function(data){
             response.status(200).send(data);
         }, helpers.sendError.bind(this, response));
     };

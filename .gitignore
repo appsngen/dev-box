@@ -1,5 +1,4 @@
 .idea
-/views/js/dependencies
 /node_modules
 /logs
 /views/cache.json

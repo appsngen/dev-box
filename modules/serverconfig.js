@@ -8,7 +8,7 @@
         storageModule = require('./storage');
 
     exports.readServerConfig = function (callback) {
-        var filename = __dirname + '/../serverconfig.json', parsedData, storage;
+        var filename = __dirname + './../serverconfig.json', parsedData, storage;
         filesystem.readFile(filename, function (data) {
             try {
                 parsedData = JSON.parse(data);
@@ -18,10 +18,10 @@
                     callback(storage.devBoxPort, status);
                 });
             } catch (ex) {
-                throw 'Unable parsed server config.';
+                throw 'Unable to parse server config.';
             }
         }, function () {
-            throw 'Unable read server config.';
+            throw 'Unable to read server config.';
         });
     };
 }());

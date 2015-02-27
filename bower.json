@@ -4,10 +4,9 @@
     "dependencies": {
         "bootstrap-css" : "3.2.0",
         "css3-mediaqueries-js" : "",
-        "jquery-color" : "2.1.2",
         "jquery.cookie" : "1.4.1",
         "jquery": "1.11.1",
-        "underscore": "~1.4.2",
+        "underscore": "~1.8.2",
         "html5shiv": "~3.7.0",
         "jquery-ui" : "1.11.1",
         "requirejs": "2.1.16"

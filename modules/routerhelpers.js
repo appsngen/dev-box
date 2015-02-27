@@ -110,20 +110,22 @@
         return widgets;
     };
 
-    exports.processResults = function (params, responseData, callback, errorCallback) {
-        var results = responseData,
-            storage = storageModule.getStorage(),
-            configPath = __dirname + storage.widgetsConfig;
-        var appsList = {}, appsPath = {}, dataWrite = [], parsedData , id;
+    exports.processResults = function (responseData, callback, errorCallback) {
+        var results = responseData;
+        var storage = storageModule.getStorage();
+        var user = storage.user;
+        var configPath = __dirname + storage.widgetsConfig;
+        var appsList = {}, appsPath = {}, dataWrite = [], parsedData, id;
+
         results.forEach(function (element) {
             id = element.name.split(':')[3];
             appsList[id] = 'http://' + storage.viewerHost + ':' + storage.viewerPort + '/organizations/' +
-                params.organizationId.split(':')[2] + '/widgets/' +
-                element.name + '/index.html?clientId=' +
-                encodeURIComponent(params.organizationId) + '&parent=' +
-                'http%3A%2F%2F' + storage.devBoxHost + ':' + storage.devBoxPort + '&integrationType=customer&userId=' +
-                encodeURIComponent(params.userId) + '&token=' +
-                encodeURIComponent(element.token);
+            user.organizationId.split(':')[2] + '/widgets/' +
+            element.name + '/index.html?clientId=' +
+            encodeURIComponent(user.organizationId) + '&parent=' +
+            'http%3A%2F%2F' + storage.devBoxHost + ':' + storage.devBoxPort + '&integrationType=customer&userId=' +
+            encodeURIComponent(user.name) + '&token=' +
+            encodeURIComponent(element.token);
             appsPath[id] = element.path;
         });
 
@@ -167,69 +169,60 @@
         });
     };
 
-    exports.viewerUpload = function (uploadConfig, callback, sendError) {
-        var that = this, summary = [], responseData = [], widgets = [];
-        filesystem.readFile(uploadConfig.filename, function (data) {
-            try {
-                widgets = JSON.parse(data);
+    exports.viewerUpload = function (widgets, user, callback, sendError) {
+        var that = this;
+        var summary = [];
+        var responseData = [];
+
+        each(widgets, function (widget, next) {
+            var widgetAbsolutePath = __dirname + '/../' + widget;
+
+            that.checkCache(widgetAbsolutePath, function (result) {
+                if (result) {
+                    filesystem.readFileBinary(widgetAbsolutePath, function (data) {
+                        summary.push({data: data, path: widgetAbsolutePath});
+                        next();
+                    }, sendError);
+                }
+                else {
+                    next();
+                }
+            }, sendError);
+        }, function (error) {
+            if (!summary) {
+                callback({message: 'Empty list of widgets.'});
+                return;
             }
-            catch (exception) {
-                var error = {message: 'Can not parse widgets list file.'};
+
+            if (error) {
                 sendError(error);
                 return;
             }
-            if (uploadConfig.pathConfig) {
-                widgets = [];
-                widgets.push(uploadConfig.pathConfig);
-            }
-            each(widgets, function (element, next) {
-                that.checkCache(element, function (result) {
-                    if (result) {
-                        filesystem.readFileBinary(element, function (data) {
-                            summary.push({ data: data, path: element });
-                            next();
-                        }, sendError);
-                    }
-                    else {
-                        next();
-                    }
-                }, sendError);
-            }, function (error) {
-                if (!summary) {
-                    callback({message: 'Empty list of widgets.'});
-                    return;
-                }
 
+            each(summary, function (widgetData, next) {
+                viewerRequester.uploadWidget(widgetData.data, function (response) {
+                    responseData.push({name: response, path: widgetData.path});
+                    next();
+                }, function (error) {
+                    sendError(error);
+
+                    that.resetCache(widgetData.path, function () {
+                        // cache was succesfully reset
+                    }, function (error) {
+                        sendError(error);
+                    });
+                });
+            }, function (error) {
                 if (error) {
                     sendError(error);
                     return;
                 }
 
-                each(summary, function (element, next) {
-                    viewerRequester.uploadWidget(element.data, function (response) {
-                        responseData.push({ name: response, path: element.path });
-                        next();
-                    }, function (error) {
-                        sendError(error);
-
-                        that.resetCache(element.path, function () {
-                            // cache was succesfully reset
-                        }, function (error) {
-                            sendError(error);
-                        });
-                    });
-                }, function (error) {
-                    if (error) {
-                        sendError(error);
-                        return;
-                    }
-
-                    responseData = that.getTokensForAllWidgets(responseData);
-                    that.processResults(uploadConfig.params, responseData, function () {
-                        callback({message: 'All widgets were uploaded.'});
-                    }, sendError);
-                });
+                responseData = that.getTokensForAllWidgets(responseData);
+                that.processResults(responseData, function () {
+                    callback({message: 'All widgets were uploaded.'});
+                }, sendError);
             });
-        }, sendError);
+        });
     };
 }());

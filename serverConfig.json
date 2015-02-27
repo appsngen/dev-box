@@ -4,7 +4,6 @@
     "viewerHost": "localhost",
     "devBoxPort": "8879",
     "devBoxHost": "localhost",
-    "widgetsPath": "/../widgetslist.json",
     "cache": "/../cache.json",
     "widgetsConfig": "/../views/config.json",
     "tokenService": {
@@ -32,5 +31,10 @@
         "name": "",
         "password": "",
         "organizationId": ""
-    }
+    },
+    "widgets": [
+        "./widgets/company-overview.zip",
+        "./widgets/portfolio-holdings.zip",
+        "./widgets/price-chart.zip"
+    ]
 }
