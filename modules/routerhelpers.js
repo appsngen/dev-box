@@ -244,7 +244,7 @@
             viewerConfig = JSONC.parse(fs.readFileSync(viewerConfigPath));
         } catch (ex) {
             console.log('Unable to parse viewer config.', ex);
-            process.exit(1);
+            throw ex;
         }
 
         return viewerConfig;
@@ -266,7 +266,7 @@
             fs.writeFileSync(viewerConfigPath, JSONC.stringify(viewerConfig));
         } catch (ex) {
             console.log('Unable to store viewer config.', ex);
-            process.exit(1);
+            throw ex;
         }
     };
 
