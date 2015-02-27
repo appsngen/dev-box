@@ -1,56 +1,21 @@
 (function () {
     'use strict';
     var http = require('http'),
-        fs = require('fs'),
         express = require('express'),
         server = express(),
         routers = require('./modules/router'),
-        storage = require('./modules/storage'),
         logger = require('./modules/logger')(module),
         bodyParser = require('body-parser'),
         methodOverride = require('method-override'),
         serverConfig = require('./modules/serverconfig'),
         compression = require('compression'),
         path = require('path'),
-        JSONC = require('comment-json'),
         cons = require('consolidate');
     var _ = require('underscore');
     _.templateSettings = {
         evaluate: /<%%([\s\S]+?)%%>/g,
         interpolate: /<%%=([\s\S]+?)%%>/g,
         escape: /<%%-([\s\S]+?)%%>/g
-    };
-
-    var tryRunViewer = function () {
-        var viewerConfigPath = __dirname + '/node_modules/appsngen-viewer/src/serverconfig.json';
-        var viewerConfig;
-        var devBoxConfig = storage.getStorage();
-
-        try {
-            viewerConfig = JSONC.parse(fs.readFileSync(viewerConfigPath));
-        } catch (ex) {
-            console.log('Unable to parse viewer config.', ex);
-            process.exit(1);
-        }
-
-        viewerConfig.viewerInstanceConfiguration.portHttp = devBoxConfig.viewerPort;
-        viewerConfig.viewerInstanceConfiguration.host = devBoxConfig.viewerHost;
-        viewerConfig.viewerInstanceConfiguration.baseUrl = 'http://' + devBoxConfig.viewerHost + ':' + devBoxConfig.viewerPort;
-        viewerConfig.user = devBoxConfig.user;
-
-        if (!devBoxConfig.user.name || !devBoxConfig.user.password) {
-            console.log('Error: empty credentials. Please set user credentials in the config.');
-            process.exit(1);
-        }
-
-        try {
-            fs.writeFileSync(viewerConfigPath, JSONC.stringify(viewerConfig));
-        } catch (ex) {
-            console.log('Unable to store viewer config.', ex);
-            process.exit(1);
-        }
-
-        require('./node_modules/appsngen-viewer/src/server');
     };
 
     var initServer = function (port, status) {
@@ -60,8 +25,6 @@
             console.log(message + ' Please set new port in server config file.');
             return;
         }
-
-        tryRunViewer();
 
         server.use(compression());
         server.engine('html', cons.underscore);
@@ -92,6 +55,7 @@
         server.get('/upload/:organizationId/:userId', routers.uploadWidgets);
         server.get('/views/*', routers.getResources);
         server.get('/views/*', routers.getHtml);
+        server.get('/viewerHeartbeat', routers.getViewerHeartBeat);
         server.get('*', routers.unhandling);
         server.use(globalLogErrors);
         server.use(globalErrorHandler);

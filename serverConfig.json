@@ -27,11 +27,6 @@
             "error": 5
         }
     },
-    "user": {
-        "name": "",
-        "password": "",
-        "organizationId": ""
-    },
     "widgets": [
         "./widgets/company-overview.zip",
         "./widgets/portfolio-holdings.zip",

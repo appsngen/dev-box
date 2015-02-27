@@ -13,7 +13,6 @@
 	<link href="css/bootstrap-responsive.css" rel="stylesheet">
     <!--[if IE 9]>
     <link href="css/ie9.css" rel="stylesheet" type="text/css"/><![endif]-->
-    <script src="<%%= viewerHost %%>/content/js/appsngen.container.api.js"></script>
 	<script src="js/dependencies/jquery/jquery.js"></script>
     <script src="js/dependencies/jquery-ui/jquery-ui.js"></script>
     <script src="js/dependencies/jquery.cookie/jquery.cookie.js"></script>
@@ -35,6 +34,7 @@
 </head>
 
 <body>
+    <input id="appsngenApiUrl" type="hidden" value="<%%= viewerHost %%>/content/js/appsngen.container.api.js"/>
     <!-- header -->
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="navbar-inner">

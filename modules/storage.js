@@ -4,17 +4,12 @@
 (function () {
     'use strict';
     var storage = {};
-    var filesystem = require('fs');
-    exports.getStorage =function(){
+
+    exports.getStorage = function () {
         return storage;
     };
 
-    exports.setStorage = function(newStorage){
+    exports.setStorage = function (newStorage) {
         storage = newStorage;
-    };
-
-    exports.saveUser = function(user){
-        storage.user = user;
-        filesystem.writeFileSync(__dirname + '/../serverconfig.json', JSON.stringify(storage));
     };
 }());
