@@ -1,6 +1,6 @@
 .idea
 /node_modules
 /logs
-/views/cache.json
+/cache.json
 config.json
 /.out/jshint
