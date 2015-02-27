@@ -277,7 +277,7 @@ $(function () {
     var clientCookie = getClientCookie();
     user = clientCookie.user;
     organization = clientCookie.organization;
-    creatAppList();
+
     toggleSignOut();
 
     // handle events publishing
@@ -344,8 +344,6 @@ $(function () {
         }
     });
 
-    disableDynamicHeight();
-
     // $('[data-app-id='ie7app']').click();
     $('[data-app-id="market-stats"]').click();
 
@@ -359,4 +357,45 @@ $(function () {
         }
         return width;
     };
+
+    $(document).ready(function () {
+        var pollDelay = 1000;
+        var pollAttempts = 15;
+        var appsngenApiUrl = $('#appsngenApiUrl').val();
+        var $viewerWaiting = $('#viewerWaiting');
+        var pingViewer = function () {
+            $.ajax({
+                url: location.protocol + '//' + location.host + '/viewerHeartbeat',
+                success: function () {
+                    var script = document.createElement('script');
+                    script.src = appsngenApiUrl;
+                    script.onload = function () {
+                        $viewerWaiting.hide();
+                        disableDynamicHeight();
+                        creatAppList();
+                    };
+                    script.onerror = function () {
+                        $viewerWaiting.hide();
+                        showAlert('Unable to load appsngen api');
+                    };
+
+                    document.head.appendChild(script);
+                },
+                error: function () {
+                    pollAttempts--;
+
+                    if (pollAttempts) {
+                        setTimeout(function () {
+                            pingViewer();
+                        }, pollDelay);
+                    } else {
+                        showAlert('Unable to run appsngen environment');
+                    }
+                }
+            });
+        };
+
+        $viewerWaiting.show();
+        pingViewer();
+    });
 });

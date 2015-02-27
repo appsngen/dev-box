@@ -1,0 +1,142 @@
+.global-waiting {
+    position: absolute;
+    z-index: 1000000;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(204, 204, 204, 0.6);
+}
+.global-waiting .waiter {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    left: 50%;
+    top: 50%;
+    margin-top: -16px;
+    margin-left: -16px;
+}
+.global-waiting .waiter > div {
+    position: absolute;
+    width: 12%;
+    height: 26%;
+    left: 44.5%;
+    top: 37%;
+    background-color: #1a1a1a;
+    opacity: 0;
+    -webkit-animation: fadeit 1s linear infinite;
+    animation: fadeit 1s linear infinite;
+    border-radius: 50px;
+    -webkit-box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+}
+.global-waiting .waiter > .bar-1 {
+    -webkit-transform: rotate(0deg) translate(0, -142%);
+    -ms-transform: rotate(0deg) translate(0, -142%);
+    transform: rotate(0deg) translate(0, -142%);
+    -webkit-animation-delay: 0s;
+    animation-delay: 0s;
+}
+.global-waiting .waiter > .bar-2 {
+    -webkit-transform: rotate(30deg) translate(0, -142%);
+    -ms-transform: rotate(30deg) translate(0, -142%);
+    transform: rotate(30deg) translate(0, -142%);
+    -webkit-animation-delay: -0.9167s;
+    animation-delay: -0.9167s;
+}
+.global-waiting .waiter > .bar-3 {
+    -webkit-transform: rotate(60deg) translate(0, -142%);
+    -ms-transform: rotate(60deg) translate(0, -142%);
+    transform: rotate(60deg) translate(0, -142%);
+    -webkit-animation-delay: -0.833s;
+    animation-delay: -0.833s;
+}
+.global-waiting .waiter > .bar-4 {
+    -webkit-transform: rotate(90deg) translate(0, -142%);
+    -ms-transform: rotate(90deg) translate(0, -142%);
+    transform: rotate(90deg) translate(0, -142%);
+    -webkit-animation-delay: -0.75s;
+    animation-delay: -0.75s;
+}
+.global-waiting .waiter > .bar-5 {
+    -webkit-transform: rotate(120deg) translate(0, -142%);
+    -ms-transform: rotate(120deg) translate(0, -142%);
+    transform: rotate(120deg) translate(0, -142%);
+    -webkit-animation-delay: -0.667s;
+    animation-delay: -0.667s;
+}
+.global-waiting .waiter > .bar-6 {
+    -webkit-transform: rotate(150deg) translate(0, -142%);
+    -ms-transform: rotate(150deg) translate(0, -142%);
+    transform: rotate(150deg) translate(0, -142%);
+    -webkit-animation-delay: -0.5833s;
+    animation-delay: -0.5833s;
+}
+.global-waiting .waiter > .bar-7 {
+    -webkit-transform: rotate(180deg) translate(0, -142%);
+    -ms-transform: rotate(180deg) translate(0, -142%);
+    transform: rotate(180deg) translate(0, -142%);
+    -webkit-animation-delay: -0.5s;
+    animation-delay: -0.5s;
+}
+.global-waiting .waiter > .bar-8 {
+    -webkit-transform: rotate(210deg) translate(0, -142%);
+    -ms-transform: rotate(210deg) translate(0, -142%);
+    transform: rotate(210deg) translate(0, -142%);
+    -webkit-animation-delay: -0.41667s;
+    animation-delay: -0.41667s;
+}
+.global-waiting .waiter > .bar-9 {
+    -webkit-transform: rotate(240deg) translate(0, -142%);
+    -ms-transform: rotate(240deg) translate(0, -142%);
+    transform: rotate(240deg) translate(0, -142%);
+    -webkit-animation-delay: -0.333s;
+    animation-delay: -0.333s;
+}
+.global-waiting .waiter > .bar-10 {
+    -webkit-transform: rotate(270deg) translate(0, -142%);
+    -ms-transform: rotate(270deg) translate(0, -142%);
+    transform: rotate(270deg) translate(0, -142%);
+    -webkit-animation-delay: -0.25s;
+    animation-delay: -0.25s;
+}
+.global-waiting .waiter > .bar-11 {
+    -webkit-transform: rotate(300deg) translate(0, -142%);
+    -ms-transform: rotate(300deg) translate(0, -142%);
+    transform: rotate(300deg) translate(0, -142%);
+    -webkit-animation-delay: -0.1667s;
+    animation-delay: -0.1667s;
+}
+.global-waiting .waiter > .bar-12 {
+    -webkit-transform: rotate(330deg) translate(0, -142%);
+    -ms-transform: rotate(330deg) translate(0, -142%);
+    transform: rotate(330deg) translate(0, -142%);
+    -webkit-animation-delay: -0.0833s;
+    animation-delay: -0.0833s;
+}
+
+.global-waiting .waiting-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: 20px;
+    margin-left: -120px;
+    color: #000000;
+}
+
+@-webkit-keyframes fadeit {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+@keyframes fadeit {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}

@@ -11,9 +11,9 @@
     <link href="css/bootstrap.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
 	<link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/waiting.css" rel="stylesheet">
     <!--[if IE 9]>
     <link href="css/ie9.css" rel="stylesheet" type="text/css"/><![endif]-->
-    <script src="<%%= viewerHost %%>/content/js/appsngen.container.api.js"></script>
 	<script src="js/dependencies/jquery/jquery.js"></script>
     <script src="js/dependencies/jquery-ui/jquery-ui.js"></script>
     <script src="js/dependencies/jquery.cookie/jquery.cookie.js"></script>
@@ -35,6 +35,7 @@
 </head>
 
 <body>
+    <input id="appsngenApiUrl" type="hidden" value="<%%= viewerHost %%>/content/js/appsngen.container.api.js"/>
     <!-- header -->
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="navbar-inner">
@@ -125,6 +126,23 @@
         <footer>
             <p>© EPAM <script>document.write(new Date().getFullYear())</script></p>
         </footer>
+    </div>
+    <div id="viewerWaiting" class="global-waiting" >
+        <div class="waiter">
+            <div class='bar-1'></div>
+            <div class='bar-2'></div>
+            <div class='bar-3'></div>
+            <div class='bar-4'></div>
+            <div class='bar-5'></div>
+            <div class='bar-6'></div>
+            <div class='bar-7'></div>
+            <div class='bar-8'></div>
+            <div class='bar-9'></div>
+            <div class='bar-10'></div>
+            <div class='bar-11'></div>
+            <div class='bar-12'></div>
+        </div>
+        <div class="waiting-text">Appsngen local environment is starting...</div>
     </div>
 
     <!-- underscore templates-->

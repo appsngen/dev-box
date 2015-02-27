@@ -3,12 +3,17 @@
  */
 (function () {
     'use strict';
-    var fs = require('fs'),
-        logger = require('./logger')(module),
-        each = require('async-each-series'),
-        filesystem = require('./filesystem'),
-        storageModule = require('./storage'),
-        viewerRequester = require('./restservicesrequester');
+    var fs = require('fs');
+    var logger = require('./logger')(module);
+    var each = require('async-each-series');
+    var filesystem = require('./filesystem');
+    var storageModule = require('./storage');
+    var viewerRequester = require('./restservicesrequester');
+    var process = require('child_process');
+    var JSONC = require('comment-json');
+
+    var viewerConfigPath = __dirname + './../node_modules/appsngen-viewer/src/serverconfig.json';
+    var viewerProcess;
 
     exports.sendError = function (response, error) {
         logger.error(error);
@@ -32,6 +37,10 @@
     exports.checkCache = function (path, callback, errorCallback) {
         var storage = storageModule.getStorage();
         var cache = {}, cachePath = __dirname + storage.cache;
+        // TODO: WARNING: remove this hotfix;
+        callback(true);
+        return;
+
         filesystem.exist(cachePath, function (exist) {
             if (!exist) {
                 fs.openSync(cachePath, 'w');
@@ -101,9 +110,10 @@
     };
 
     exports.getTokensForAllWidgets = function (widgets) {
-        var i;
+        var i, token;
+
         for (i = 0; i < widgets.length; i++) {
-            var token = viewerRequester.createToken(widgets[i].name);
+            token = viewerRequester.createToken(widgets[i].name);
             widgets[i].token = token;
         }
 
@@ -223,6 +233,66 @@
                     callback({message: 'All widgets were uploaded.'});
                 }, sendError);
             });
+        });
+    };
+
+    // TODO: make async
+    exports.readViewerConfig = function () {
+        var viewerConfig;
+
+        try {
+            viewerConfig = JSONC.parse(fs.readFileSync(viewerConfigPath));
+        } catch (ex) {
+            console.log('Unable to parse viewer config.', ex);
+            throw ex;
+        }
+
+        return viewerConfig;
+    };
+
+    // TODO: make async
+    exports.syncViewerConfig = function () {
+        var viewerConfig;
+        var devBoxConfig = storageModule.getStorage();
+
+        viewerConfig = exports.readViewerConfig();
+
+        viewerConfig.viewerInstanceConfiguration.portHttp = devBoxConfig.viewerPort;
+        viewerConfig.viewerInstanceConfiguration.host = devBoxConfig.viewerHost;
+        viewerConfig.viewerInstanceConfiguration.baseUrl = 'http://' + devBoxConfig.viewerHost + ':' + devBoxConfig.viewerPort;
+        viewerConfig.user = devBoxConfig.user;
+
+        try {
+            fs.writeFileSync(viewerConfigPath, JSONC.stringify(viewerConfig));
+        } catch (ex) {
+            console.log('Unable to store viewer config.', ex);
+            throw ex;
+        }
+    };
+
+    exports.viewerIsRunning = function () {
+        return viewerProcess && !viewerProcess.killed;
+    };
+
+    exports.stopViewer = function () {
+        if (exports.viewerIsRunning()) {
+            console.log('Stopping viewer');
+            viewerProcess.kill();
+            viewerProcess = null;
+        } else {
+            console.log('Unable to stop viewer: viewer is not running');
+        }
+
+    };
+
+    exports.runViewer = function () {
+        if (exports.viewerIsRunning()) {
+            exports.stopViewer();
+        }
+
+        console.log('Starting viewer');
+        viewerProcess = process.fork('server.js', [], {
+            cwd: './node_modules/appsngen-viewer/src'
         });
     };
 }());
