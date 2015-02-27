@@ -28,8 +28,8 @@
         }
     },
     "widgets": [
-        "./widgets/company-overview.zip",
-        "./widgets/portfolio-holdings.zip",
-        "./widgets/price-chart.zip"
+        "/widgets/company-overview.zip",
+        "/widgets/portfolio-holdings.zip",
+        "/widgets/price-chart.zip"
     ]
 }

@@ -12,7 +12,7 @@
     var process = require('child_process');
     var JSONC = require('comment-json');
 
-    var viewerConfigPath = __dirname + './../node_modules/appsngen-viewer/src/serverconfig.json';
+    var viewerConfigPath = __dirname + '/../node_modules/appsngen-viewer/src/serverconfig.json';
     var viewerProcess;
 
     exports.sendError = function (response, error) {
