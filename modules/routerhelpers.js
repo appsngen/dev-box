@@ -37,6 +37,10 @@
     exports.checkCache = function (path, callback, errorCallback) {
         var storage = storageModule.getStorage();
         var cache = {}, cachePath = __dirname + storage.cache;
+        // TODO: WARNING: remove this hotfix;
+        callback(true);
+        return;
+
         filesystem.exist(cachePath, function (exist) {
             if (!exist) {
                 fs.openSync(cachePath, 'w');
