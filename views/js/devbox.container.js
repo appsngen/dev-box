@@ -362,6 +362,7 @@ $(function () {
         var pollDelay = 1000;
         var pollAttempts = 15;
         var appsngenApiUrl = $('#appsngenApiUrl').val();
+        var $viewerWaiting = $('#viewerWaiting');
         var pingViewer = function () {
             $.ajax({
                 url: location.protocol + '//' + location.host + '/viewerHeartbeat',
@@ -369,12 +370,12 @@ $(function () {
                     var script = document.createElement('script');
                     script.src = appsngenApiUrl;
                     script.onload = function () {
-                        // TODO: hide viewer waiting
+                        $viewerWaiting.hide();
                         disableDynamicHeight();
                         creatAppList();
                     };
                     script.onerror = function () {
-                        // TODO: hide viewer waiting
+                        $viewerWaiting.hide();
                         showAlert('Unable to load appsngen api');
                     };
 
@@ -388,14 +389,13 @@ $(function () {
                             pingViewer();
                         }, pollDelay);
                     } else {
-                        // TODO: show timeout error
                         showAlert('Unable to run appsngen environment');
                     }
                 }
             });
         };
 
-        // TODO: show viewer waiting
+        $viewerWaiting.show();
         pingViewer();
     });
 });
