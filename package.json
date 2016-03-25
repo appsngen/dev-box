@@ -1,10 +1,10 @@
 {
     "name": "appsngen-dev-box",
     "description": "Tool for appsngen widgets development.",
-    "version": "2.0.9",
+    "version": "2.0.10",
     "private": false,
     "dependencies": {
-        "appsngen-viewer": "2.0.5",
+        "appsngen-viewer": "2.0.6",
         "grunt": "~0.4.5",
         "grunt-cli": "0.1.13",
         "grunt-contrib-jshint": "0.10.0",
