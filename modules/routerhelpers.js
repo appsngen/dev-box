@@ -14,7 +14,7 @@
     var path = require('path');
 
     var viewerPath = path.dirname(require.resolve('appsngen-viewer'));
-    var viewerConfigPath = path.join(viewerConfigPath, '/serverconfig.json');
+    var viewerConfigPath = path.join(viewerPath, '/serverconfig.json');
     var viewerProcess;
 
     exports.sendError = function (response, error) {
