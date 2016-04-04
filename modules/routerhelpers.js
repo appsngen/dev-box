@@ -11,8 +11,10 @@
     var viewerRequester = require('./restservicesrequester');
     var process = require('child_process');
     var JSONC = require('comment-json');
+    var path = require('path');
 
-    var viewerConfigPath = __dirname + '/../node_modules/appsngen-viewer/src/serverconfig.json';
+    var viewerPath = path.dirname(require.resolve('appsngen-viewer'));
+    var viewerConfigPath = path.join(viewerPath, '/serverconfig.json');
     var viewerProcess;
 
     exports.sendError = function (response, error) {
@@ -292,7 +294,7 @@
 
         console.log('Starting viewer');
         viewerProcess = process.fork('server.js', [], {
-            cwd: './node_modules/appsngen-viewer/src'
+            cwd: viewerPath
         });
     };
 }());
