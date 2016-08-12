@@ -61,6 +61,7 @@
         server.use(globalErrorHandler);
 
         http.createServer(server).listen(server.get('port'), function () {
+            process.send('started');
             logger.info('Server running at http://localhost:' + port);
             logger.info('For open dev box please open ' + 'http://localhost:' + port + '/views/index.html');
             logger.info('CTRL + C to shutdown');
